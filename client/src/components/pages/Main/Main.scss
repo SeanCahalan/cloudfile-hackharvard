@@ -16,6 +16,41 @@
         .body{
             padding: 2vw;
             flex: 1;
+
+            .file-wrapper{
+                display: flex;
+                flex-wrap: wrap;
+                .file{
+
+                    .preview{
+                        height: 70%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        &.dropbox{
+                            background: #0070e0;
+                        }
+                        i{
+                            color: white;
+                            font-size: 5vw;
+                        }
+                    }
+                    .info{
+                        padding: 1vw;
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                    }
+                    width: 20%;
+                    margin-left: 2vw;
+                    margin-bottom: 2vw;
+                    height: 20vw;
+                    box-shadow: 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
+                }
+            }
+            
+
         }
     }
 }

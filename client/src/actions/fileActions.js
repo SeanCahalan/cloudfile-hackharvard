@@ -9,3 +9,13 @@ export function dropboxDownload(){
         })
     }
 }
+
+export function dropboxFetch(){
+    return function(dispatch){
+        axios.post('/api/dropbox/fetch', {path: ''})
+        .then(res => {
+            console.log(res);
+            dispatch({type: 'FETCH_DROPBOX', payload: res.data})
+        })
+    }
+}

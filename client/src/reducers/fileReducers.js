@@ -10,6 +10,11 @@ export function fileReducers(state = initialState, action) {
                 ...state,
                 files: [...state.files, action.payload]
             };
+        case 'FETCH_DROPBOX':
+            return {
+                ...state,
+                files: [...state.files, ...action.payload]
+            }
         default:
             return state;
     }

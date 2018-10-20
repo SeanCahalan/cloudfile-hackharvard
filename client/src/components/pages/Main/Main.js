@@ -3,9 +3,25 @@ import styles from './Main.scss';
 import { connect } from 'react-redux';
 
 import { addDropbox, logout } from '../../../actions/userActions'
+import { fileIcon } from '../../../util/data';
 
 class Main extends Component{
     render(){
+
+        let files = [];
+        files = this.props.files.map(file => {
+            return(
+                <div key={file.name} className={"file col " + file.service}>
+                    <div className={"preview " + file.service}>
+                        <i className={`fas fa-file-${fileIcon[file.name.split('.')[1]]}`} />
+                    </div>
+                    <div className="info">
+                        <div>{file.name}</div>
+                    </div>
+                </div>
+            )
+        })
+
         return(
             <div className={styles.Main}>
 
@@ -25,7 +41,10 @@ class Main extends Component{
                 </div>
 
                 <div className="body col">
-
+                    <div className="file-wrapper">
+                        {files}
+                    </div>
+                    
                 </div>
 
             </div>
@@ -35,7 +54,8 @@ class Main extends Component{
 
 function mapStateToProps(state){
     return {
-        info: state.user.info
+        info: state.user.info,
+        files: state.files.files
     }
 }
 

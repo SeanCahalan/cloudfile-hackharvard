@@ -20,7 +20,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 middleware = applyMiddleware(...middleware);
 let reducers = combineReducers({
-    file: fileReducers,
+    files: fileReducers,
     user: userReducers
 })
 

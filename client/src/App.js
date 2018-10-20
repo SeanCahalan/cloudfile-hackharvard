@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 
 import { fbUpdateStatus, login, addService } from './actions/userActions';
-import { dropboxDownload } from './actions/fileActions';
+import { dropboxDownload, dropboxFetch } from './actions/fileActions';
 
 import Login from './components/auth/Login/Login';
 import Main from './components/pages/Main/Main';
@@ -59,7 +59,7 @@ class App extends Component {
 
     componentDidUpdate(prevProps){
         if(!prevProps.user.info && this.props.user.info){
-            this.props.dropboxDownload();
+            this.props.dropboxFetch();
         }
     }
 
@@ -90,7 +90,8 @@ const actions = {
     fbUpdateStatus,
     dropboxDownload,
     login,
-    addService
+    addService,
+    dropboxFetch
 }
 
 export default withRouter(connect(mapStateToProps, actions)(App));
