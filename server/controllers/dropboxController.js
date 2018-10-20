@@ -1,4 +1,6 @@
 'use strict';
+const User = require('../models/user');
+
 let dropbox;
 
 module.exports = {
@@ -22,6 +24,7 @@ module.exports = {
         for (let i=0; i < results.entries.length; i++) {
           let entry = results.entries[i];
           bibbity.push({
+            'id': entry.id,
             'name': entry.name,
             'size': entry.size,
             'last_modified': entry.server_modified,
@@ -89,13 +92,12 @@ module.exports = {
   },
 
   shareFile: function(req, res, next) {
-    const file = req.body.file;
+    const file = req.body.file; // this has the format id:gIHVCSMIN0AAAAAAAAADVw
     const fbidToShare = req.body.fbid;
     const access = req.body.access; // can be 'editor' or 'viewer'
-
+    // TODO: right now only access type of editor works
     return User.findOne({ 'facebook.id': fbidToShare })
       .then(user => {
-        console.log(user)
         const dropboxId = user.dropbox.id;
         return dropbox.sharingAddFileMember({
           file: file,
@@ -106,7 +108,7 @@ module.exports = {
           quiet: false,
           access_level: { '.tag': access },
           add_message_as_comment: false
-        })
+        });
       })
       .then(result => res.status(200).send(result))
       .catch(err => next(err))

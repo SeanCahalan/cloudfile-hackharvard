@@ -10,7 +10,6 @@ module.exports = {
       throw new Error('Auth required')
 
     const fbid = req.headers['authorization'].split(' ')[1]
-    console.log(fbid)
     return User.findOne({ 'facebook.id': fbid })
       .then(user => {
         if (!user)
