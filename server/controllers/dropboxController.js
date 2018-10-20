@@ -2,7 +2,9 @@
 const dropbox = require('../config/dropbox');
 
 module.exports = {
+  // path example: "/files/images"
   // path = '' for home directory
+
   fetch: function(req, res, next) {
     const path = req.body.path;
     return dropbox.filesListFolder({ path: path })
@@ -17,15 +19,14 @@ module.exports = {
             'service': 'dropbox'
           });
         }
-        res.status(200).send(bibbity);
+        return res.status(200).send(bibbity);
       })
       .catch(err => next(err));
   },
 
-  // path example: "/files/images"
   upload: function(req, res, next) {
     if (!req.files.file[0])
-      return next(new Error('No image provided'));
+      return next(new Error('No file provided'));
     if (!req.body.path)
       return next(new Error('No path provided'))
 
