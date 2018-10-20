@@ -12,7 +12,7 @@ module.exports = {
           const entry = results.entries[i];
           bibbity.push({
             'name': entry.name,
-            'source': 'drive'
+            'service': 'drive'
           });
         }
         res.status(200).send(bibbity);
