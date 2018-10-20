@@ -138,13 +138,24 @@ module.exports = {
     // TODO: right now only access type of editor works
     return User.findOne({ 'facebook.id': fbidToShare })
       .then(user => {
-        const dropboxId = user.dropbox.id;
+
+        let members;
+        if (user.dropbox.id) {
+          members = [{
+            dropbox_id: user.dropbox.id,
+            '.tag': 'dropbox_id'
+          }];
+        }
+        else {
+          members = [{
+            email: user.facebook.email,
+            '.tag': 'email'
+          }]
+        }
+
         return dropbox.sharingAddFileMember({
           file: file,
-          members: [{
-            dropbox_id: dropboxId,
-            '.tag': 'dropbox_id'
-          }],
+          members: members,
           quiet: false,
           access_level: { '.tag': access },
           add_message_as_comment: false
