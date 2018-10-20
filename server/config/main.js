@@ -15,6 +15,10 @@ module.exports = {
     redirect_uris: process.env.GOOGLE_REDIRECT_URIS.split(','),
     javascript_origins: process.env.GOOGLE_JAVASCRIPT_ORIGINS.split(',')
   },
+  facebook: {
+    app_secret: process.env.FACEBOOK_APP_SECRET,
+    app_id: process.env.FACEBOOK_APP_ID
+  },
   database: process.env.MONGODB_URI,
   node_env: process.env.NODE_ENV || "development",
   port: process.env.PORT || 3000
