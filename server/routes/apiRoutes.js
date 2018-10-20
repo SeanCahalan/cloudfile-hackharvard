@@ -6,5 +6,6 @@ const express = require('express');
 
 const apiRouter = express.Router();
 apiRouter.get('/test', apiController.test);
+apiRouter.get('/dropbox', apiController.dropbox);
 
 module.exports = apiRouter;

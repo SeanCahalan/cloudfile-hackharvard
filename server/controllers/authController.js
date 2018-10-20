@@ -13,7 +13,7 @@ module.exports = {
         if (!user)
           throw new Error('You need to login with Facebook');
         req.user = user;
-        return next()
+        return next();
       })
       .catch(err => next(err));
   },
