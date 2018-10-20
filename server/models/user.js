@@ -5,9 +5,10 @@ const Schema = mongoose.Schema;
 // ============================ User Schema ============================ //
 
 const UserSchema = new Schema({
-  fbid: {
-    type: String,
-    required: true
+  facebook: {
+    id: { type: String, require: true },
+    accessToken: { type: String, require: true },
+    expiresOn: Date
   },
   dropbox: {
     token: String

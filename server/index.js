@@ -1,6 +1,7 @@
 "use strict";
 require("dotenv").config();
 Promise = require("bluebird");
+require("./helpers/date")
 const bodyParser = require("body-parser");
 const logger = require("morgan");
 const router = require("./router");
