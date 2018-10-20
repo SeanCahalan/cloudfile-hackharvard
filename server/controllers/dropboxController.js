@@ -98,6 +98,13 @@ module.exports = {
     return dropbox.filesCreateFolder({ path: path })
       .then(result => res.status(201).send(result))
       .catch(err => next(err))
+  },
+
+  shareFile: function(req, res, next) {
+/*
+    return dropbox.sharingAddFileMember(file, [{ dropbox_id: dropboxId, '.tag': 'dropbox_id' }])
+      .then(result => res.status(200).send(result))
+      .catch(err => next(err))*/
   }
 
 

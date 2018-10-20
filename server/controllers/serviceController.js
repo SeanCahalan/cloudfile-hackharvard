@@ -16,7 +16,7 @@ module.exports = {
     var body = req.body;
     const service = body.service;
     delete body.service;
-    console.log(body)
+    
     var user = req.user;
     user[service] = body;
     return user.save()
