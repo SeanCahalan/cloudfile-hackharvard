@@ -66,10 +66,14 @@
         .body{
             padding: 2vw;
             flex: 1;
-
+            .header{
+                margin-left: 2vw;
+                margin-bottom: 2vw;
+            }
             .file-wrapper{
                 display: flex;
                 flex-wrap: wrap;
+                margin-bottom: 1vw;
                 .file{
 
                     .preview{

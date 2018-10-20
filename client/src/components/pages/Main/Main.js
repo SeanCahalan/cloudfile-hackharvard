@@ -11,8 +11,20 @@ import ModalContainer from '../../layout/ModalContainer/ModalContainer';
 class Main extends Component{
     render(){
 
-        let files = [];
-        files = this.props.files.map(file => {
+        let owned = this.props.owned.map(file => {
+            return(
+                <div key={file.name} className={"file col " + file.service}>
+                    <div className={"preview " + file.service}>
+                        <i className={`fas fa-file-${fileIcon[file.name.split('.')[1]]}`} />
+                    </div>
+                    <div className="info">
+                        <div>{file.name}</div>
+                    </div>
+                </div>
+            )
+        })
+
+        let shared = this.props.shared.map(file => {
             return(
                 <div key={file.name} className={"file col " + file.service}>
                     <div className={"preview " + file.service}>
@@ -52,8 +64,13 @@ class Main extends Component{
                 </div>
 
                 <div className="body col">
+                    <div className="header">My files</div>
                     <div className="file-wrapper">
-                        {files}
+                        {owned}
+                    </div>
+                    <div className="header">Shared with me</div>
+                    <div className="file-wrapper">
+                        {shared}
                     </div>
                     
                 </div>
@@ -66,7 +83,8 @@ class Main extends Component{
 function mapStateToProps(state){
     return {
         info: state.user.info,
-        files: state.files.files
+        owned: state.files.owned,
+        shared: state.files.shared
     }
 }
 
