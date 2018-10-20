@@ -1,15 +1,20 @@
 "use strict";
-const fs = require("fs");
-const { google } = require("googleapis");
-const oAuth2Client = require("../config/google");
-const TOKEN_PATH = "../config/token.json";
+let google;
 
 module.exports = {
-  fetchDrive: function(req, res, next) {
-    fs.readFile(TOKEN_PATH, (err, token) => {
-      const auth = oAuth2Client.setCredentials(JSON.parse(token));
-      const drive = google.drive({ version: "v3", auth });
-      drive.files.list(
+
+  middleware: function(req, res, next) {
+    const user = req.user;
+    console.log(user)
+    if (!user.google.access_token)
+      return next('User has not added google')
+    if (!google)
+      google = require('../config/google')(user.google)
+    return next();
+  },
+
+  fetch: function(req, res, next) {
+      google.files.list(
         {
           fields: "nextPageToken, files(id, name, parents, mimeType)"
         },
@@ -27,16 +32,11 @@ module.exports = {
           }
         }
       );
-    });
   },
 
   deleteFile: function(req, res, next) {
-    fs.readFile(TOKEN_PATH, (err, token) => {
-      const auth = oAuth2Client.setCredentials(JSON.parse(token));
-      const drive = google.drive({ version: "v3", auth });
-      drive.files.delete({ fileId }, (err, res) => {
+      google.files.delete({ fileId }, (err, res) => {
         if (err) return console.log("The API returned an error: " + err);
       });
-    });
   }
 };
