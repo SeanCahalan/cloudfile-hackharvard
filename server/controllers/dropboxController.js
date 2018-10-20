@@ -10,11 +10,10 @@ module.exports = {
         let bibbity = [];
         for (let i=0; i < results.entries.length; i++) {
           let entry = results.entries[i];
-          let metadata = dropbox.filesGetMetadata(entry.path_display)
           bibbity.push({
             'name': entry.name,
-            'size': metadata.size,
-            'last_modified', metadata.server_modified,
+            'size': entry.size,
+            'last_modified', entry.server_modified,
             'service': 'dropbox'
           });
         }
