@@ -25,26 +25,31 @@ module.exports = {
     return next();
   },
 
+
+  // TODO: add shared folders
   fetch: function(req, res, next) {
     const path = req.body.path;
-    return dropbox.filesListFolder({ path: path })
-      .then(results => {
-        let bibbity = [];
-        for (let i=0; i < results.entries.length; i++) {
-          let entry = results.entries[i];
-          // separate file name and extension for seano
-          let name = splitFileName(entry.name);
-          bibbity.push({
-            'id': entry.id,
-            'name': entry.name,
-            'size': entry.size,
-            'last_modified': entry.server_modified,
-            'service': 'dropbox'
-          });
-        }
-        return res.status(200).send(bibbity);
-      })
-      .catch(err => next(err));
+    return Promise.all([
+      dropbox.filesListFolder({ path: path }),
+      dropbox.sharingListReceivedFiles()
+    ])
+    .then(([files, sharedFiles]) => {
+      const results = files.entries.concat(sharedFiles.entries);
+      let bibbity = [];
+      for (let i=0; i < results.length; i++) {
+        let entry = results[i];
+        bibbity.push({
+          'id': entry.id,
+          'name': entry.name,
+          'size': entry.size,
+          'last_modified': entry.server_modified,
+          'parent_shared_folder_id': entry.parent_shared_folder_id || undefined,
+          'service': 'dropbox',
+        });
+      }
+      return res.status(200).send(bibbity);
+    })
+    .catch(err => next(err));
   },
 
   upload: function(req, res, next) {
