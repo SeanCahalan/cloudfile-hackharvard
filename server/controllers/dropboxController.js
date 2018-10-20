@@ -1,6 +1,15 @@
 'use strict';
 let dropbox;
 
+let splitFileName = function(fileName) {
+  let splitName = fileName.split('.');
+  // assume files won't have '.', this won't work for hidden files
+  let type = splitName.length == 1 ? 'folder' : splitName.pop();
+  let name = splitName.join('.');
+
+  return [name, type];
+}
+
 module.exports = {
   // path example: "/files/images"
   // path = '' for home directory
@@ -21,9 +30,11 @@ module.exports = {
         let bibbity = [];
         for (let i=0; i < results.entries.length; i++) {
           let entry = results.entries[i];
+          // separate file name and extension for seano
+          let name = splitFileName(entry.name);
           bibbity.push({
-            'name': entry.name,
-            'size': entry.size,
+            'name': name[0],
+            'size': name[1],
             'last_modified': entry.server_modified,
             'service': 'dropbox'
           });
