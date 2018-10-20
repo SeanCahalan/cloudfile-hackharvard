@@ -183,5 +183,16 @@ module.exports = {
     //     }
     //   }
     // );
+  },
+
+  getSpace: function(req, res, next) {
+    return drive.about.get()
+      .then(result => {
+        return res.status(200).send({
+          used: result.storageQuota.usage,
+          total: result.storageQuota.limit
+        });
+      })
+      .catch(err => next(err))
   }
 };
