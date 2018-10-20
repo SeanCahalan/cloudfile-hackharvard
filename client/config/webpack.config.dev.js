@@ -1,5 +1,6 @@
 'use strict';
 
+const autoprefixer = require("autoprefixer");
 const path = require('path');
 const webpack = require('webpack');
 const PnpWebpackPlugin = require('pnp-webpack-plugin');
@@ -34,6 +35,7 @@ const sassModuleRegex = /\.module\.(scss|sass)$/;
 // common function to get style loaders
 const getStyleLoaders = (cssOptions, preProcessor) => {
   const loaders = [
+    require.resolve('css-hot-loader'),
     require.resolve('style-loader'),
     {
       loader: require.resolve('css-loader'),
@@ -289,7 +291,40 @@ module.exports = {
           {
             test: sassRegex,
             exclude: sassModuleRegex,
-            use: getStyleLoaders({ importLoaders: 2 }, 'sass-loader'),
+            use:  [
+                "css-hot-loader",
+                require.resolve("style-loader"),
+                {
+                    loader: require.resolve("css-loader"),
+                    options: {
+                        importLoaders: 1,
+                        modules: true,
+                        localIdentName:
+                            "[name]_[local]__[hash:base64:4]"
+                    }
+                },
+                {
+                    loader: require.resolve("postcss-loader"),
+                    options: {
+                        // Necessary for external CSS imports to work
+                        // https://github.com/facebookincubator/create-react-app/issues/2677
+                        ident: "postcss",
+                        plugins: () => [
+                            require("postcss-flexbugs-fixes"),
+                            autoprefixer({
+                                browsers: [
+                                    ">1%",
+                                    "last 4 versions",
+                                    "Firefox ESR",
+                                    "not ie < 9" // React doesn't support IE8 anyway
+                                ],
+                                flexbox: "no-2009"
+                            })
+                        ]
+                    }
+                },
+                "sass-loader"
+            ]
           },
           // Adds support for CSS Modules, but using SASS
           // using the extension .module.scss or .module.sass
