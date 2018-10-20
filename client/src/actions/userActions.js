@@ -16,13 +16,19 @@ export function login(){
                     axios.defaults.headers.common["Authorization"] = "Bearer " + token;
                     window.FB.api('/me', function(response) {
                         console.log(response);
-                        dispatch({type: "LOGIN_SUCCESS", payload:{ 
-                            name: response.name
-                        }})
-                      });
-                    // TODO backend call
-                    
 
+                        // TODO backend call
+                        axios.post('/auth/login', {fbid: token})
+                        .then(res => {
+                            console.log(res.data);
+                            dispatch({type: "LOGIN_SUCCESS", payload:{ 
+                                name: response.name
+                            }})
+                        }).catch(err => {
+                            console.log(err.data)
+                        })
+                        
+                      });
                 } else {
                     console.log(
                         "User cancelled login or did not fully authorize."
