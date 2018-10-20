@@ -1,28 +1,60 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { connect } from "react-redux";
+
+import { fbUpdateStatus } from './actions/userActions';
+
+import Login from './components/auth/Login/Login';
+import Main from './components/pages/Main/Main';
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+    componentDidMount() {
+
+        window.fbAsyncInit = () => {
+            window.FB.init({
+                appId: '325135954735646',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: "v3.1"
+            });
+            this.props.fbUpdateStatus(true);
+        };
+
+        (function(d, s, id) {
+            var js,
+                fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        })(document, "script", "facebook-jssdk");
+    }
+
+    render() {
+        return (
+        <div className="App">
+            { this.props.user.info ? 
+                (
+                    <Main />
+                ) : (
+                    <Login 
+                        fbLoaded={this.props.user.fbLoaded}
+                    />
+                )
+            }
+        </div>
+        );
+    }
 }
 
-export default App;
+function mapStateToProps(state){
+    return {
+        user: state.user
+    }
+}
+
+const actions = { fbUpdateStatus }
+
+export default connect(mapStateToProps, actions)(App);

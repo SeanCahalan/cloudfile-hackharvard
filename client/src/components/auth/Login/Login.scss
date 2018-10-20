@@ -1,0 +1,20 @@
+.Login{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    :global{
+        .fb-login{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 3vw;
+            font-size: 2vw;
+            padding: 0 1vw;
+            border-radius: .5vw;
+            background-color: #3b5998;
+            color: 	#f7f7f7;
+            font-weight: bold;
+        }
+    }
+}
