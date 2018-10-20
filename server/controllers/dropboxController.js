@@ -8,7 +8,7 @@ let splitFileName = function(fileName) {
   let name = splitName.join('.');
 
   return [name, type];
-}
+};
 
 module.exports = {
   // path example: "/files/images"
@@ -33,6 +33,7 @@ module.exports = {
           // separate file name and extension for seano
           let name = splitFileName(entry.name);
           bibbity.push({
+            'id': entry.id.split(':').pop(),
             'name': name[0],
             'size': name[1],
             'last_modified': entry.server_modified,
