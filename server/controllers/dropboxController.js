@@ -2,17 +2,19 @@
 const dropbox = require('../config/dropbox');
 
 module.exports = {
-  fetchDropbox: function(req, res, next) {
-    return dropbox.filesListFolder({path: req.body.path})
+  fetch: function(req, res, next) {
+    const path = req.body.path;
+    return dropbox.filesListFolder({ path: path })
       .then(results => {
-        bibbity = [];
-        for (i=0; i<results.entries.length; i++) {
-          entry = results.entries[i];
+        
+        let bibbity = [];
+        for (let i=0; i<results.entries.length; i++) {
+          let entry = results.entries[i];
           bibbity.push({
             'name': entry.name,
             // ask sean if he needs this cased or without file name appended
             'path': entry.path_lower,
-            'source': 'Dropbox'
+            'source': 'dropbox'
           });
         }
         res.status(200).send(bibbity);
@@ -22,7 +24,7 @@ module.exports = {
 
   // TODO: make a more general route for uploading
   // path example: "/files/images"
-  uploadDropbox: function(req, res, next) {
+  upload: function(req, res, next) {
     if (!req.files.file[0])
       return next(new Error('No image provided'));
     if (!req.body.path)
@@ -36,7 +38,7 @@ module.exports = {
   },
 
   // this is some whack fuckery but i think it works
-  downloadDropbox: function(req, res, next) {
+  download: function(req, res, next) {
     if (!req.body.path)
       return next(new Error('No path provided'))
     const path = req.body.path;
@@ -55,5 +57,17 @@ module.exports = {
         res.end(data);
       })
       .catch(err => next(err));
+  },
+
+  delete: function(req, res, next) {
+    if (!req.body.path)
+      return next(new Error('No path provided'));
+
+    const path = req.body.path;
+    return dropbox.filesDelete({ path: path })
+      .then(result => res.status(201).send(result))
+      .catch(err => next(err));
   }
+
+
 };
