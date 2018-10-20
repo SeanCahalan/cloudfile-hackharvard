@@ -16,12 +16,17 @@ module.exports = {
 
   },
 
+  // TODO: make a more general route,
+  // path example: "/files/images"
   uploadDropbox: function(req, res, next) {
-    if (!req.file)
-      throw new NoDataError('No image provided');
-    console.log(req.file)
+    if (!req.files.file[0])
+      throw new Error('No image provided');
+    if (!req.body.path)
+      return next(new Error('No path provided'))
 
-    return dropbox.filesUpload({ path: `/${req.file.originalname}`, contents: req.file.buffer })
+    const file = req.files.file[0];
+    const path = req.body.path
+    return dropbox.filesUpload({ path: `${path}/${file.originalname}`, contents: file.buffer })
       .then(result => res.status(201).send(result))
       .catch(err => next(err));
   }

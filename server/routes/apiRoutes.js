@@ -9,6 +9,7 @@ const upload = multer()
 const apiRouter = express.Router();
 apiRouter.get('/test', apiController.test);
 apiRouter.get('/dropbox/fetch', apiController.dropbox);
-apiRouter.post('/dropbox/upload', upload.single('file'), apiController.uploadDropbox);
+apiRouter.post('/dropbox/upload', upload.fields([{ name: 'file', maxCount: 1 },
+  { name: 'path', maxCount: 1 }]), apiController.uploadDropbox);
 
 module.exports = apiRouter;
