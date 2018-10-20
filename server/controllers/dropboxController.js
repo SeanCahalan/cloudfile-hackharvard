@@ -2,18 +2,16 @@
 const dropbox = require('../config/dropbox');
 
 module.exports = {
+  // path = '' for home directory
   fetch: function(req, res, next) {
     const path = req.body.path;
     return dropbox.filesListFolder({ path: path })
       .then(results => {
-        
         let bibbity = [];
-        for (let i=0; i<results.entries.length; i++) {
+        for (let i=0; i < results.entries.length; i++) {
           let entry = results.entries[i];
           bibbity.push({
             'name': entry.name,
-            // ask sean if he needs this cased or without file name appended
-            'path': entry.path_lower,
             'source': 'dropbox'
           });
         }
@@ -22,7 +20,6 @@ module.exports = {
       .catch(err => next(err));
   },
 
-  // TODO: make a more general route for uploading
   // path example: "/files/images"
   upload: function(req, res, next) {
     if (!req.files.file[0])

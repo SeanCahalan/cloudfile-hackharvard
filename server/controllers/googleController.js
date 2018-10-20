@@ -3,15 +3,15 @@ const google = require('../config/google');
 
 module.exports = {
   fetchDrive: function(req, res, next) {
-    return drive.files.list({path: req.body.path})
+    const path = req.body.path;
+    
+    return google.files.list({path: path})
       .then(results => {
         var bibbity = [];
         for (i=0; i<results.entries.length; i++) {
           const entry = results.entries[i];
           bibbity.push({
             'name': entry.name,
-            // ask sean if he needs this cased or without file name appended
-            'path': entry.path_lower,
             'source': 'drive'
           });
         }
@@ -28,7 +28,7 @@ module.exports = {
 
     const file = req.files.file[0];
     const path = req.body.path
-    return drive.PLACEHOLDERDRIVEFUNCTIONAHAHAHAHHHHHHH({ path: `${path}/${file.originalname}`, contents: file.buffer })
+    return google.PLACEHOLDERDRIVEFUNCTIONAHAHAHAHHHHHHH({ path: `${path}/${file.originalname}`, contents: file.buffer })
       .then(result => res.status(201).send(result))
       .catch(err => next(err));
   },
@@ -38,7 +38,7 @@ module.exports = {
     if (!req.body.path)
       return next(new Error('No path provided'))
     const path = req.body.path;
-    return drive.PLACEHOLDERDRIVEFUNCTIONAAAAAAHHH({ path: path })
+    return google.PLACEHOLDERDRIVEFUNCTIONAAAAAAHHH({ path: path })
       .then(results => {
         const data = results.fileBinary
         const fileName = results.name;
