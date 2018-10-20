@@ -10,7 +10,7 @@ let addFileToStructure = function(fs, file) {
   let parents = file.parents
 
   // get the part of the json we want to put the new file in
-  for (i=0; i<parents.length; i++)
+  for (let i=0; i<parents.length; i++)
     path = path[parents[i]];
 
   path[file.id] = {
