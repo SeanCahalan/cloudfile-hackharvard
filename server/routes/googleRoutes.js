@@ -4,6 +4,6 @@ const express = require('express');
 
 const googleRouter = express.Router();
 
-googleRouter.post('/upload', googleController.upload);
+//googleRouter.post('/upload', googleController.upload);
 
 module.exports = googleRouter;
