@@ -25,7 +25,17 @@ module.exports = {
     return next();
   },
 
-  // TODO: add shared folders
+  getSpace: function(req, res, next) {
+    return dropbox.usersGetSpaceUsage()
+      .then(result => {
+        return res.status(200).send({
+          used: Math.round(result.used*100/1000000000)/100,
+          total: Math.round(result.allocation.allocated*100/1000000000)/100
+        })
+      })
+      .catch(err => next(err))
+  },
+
   fetch: function(req, res, next) {
     const path = req.body.path;
     return Promise.all([
@@ -45,7 +55,7 @@ module.exports = {
           'service': 'dropbox',
         });
       }
-      
+
       let bibbityShared = [];
       const shared = sharedFiles.entries.concat(sharedFolders.entries)
       for (let i=0; i < shared.length; i++) {
