@@ -5,22 +5,45 @@ let compareFiles = function(file1, file2) {
   return file1.parents.length - file2.parents.length;
 };
 
-let addFileToStructure = function(fs, file) {
-  let path = fs;
-  let parents = file.parents
-
-  // get the part of the json we want to put the new file in
-  for (let i=0; i<parents.length; i++)
-    path = path[parents[i]];
-
-  path[file.id] = {
+let beautifyFile = function(file) {
+  return {
     name: file.name,
     type: file.mimeType.split('.').pop(),
     size: file.size,
     lastModified: file.modifiedTime,
     service: 'google'
-  };
-};
+  }
+}
+
+let populateDirectory = function(directoryID, files) {
+  directory = {};
+  for (let i=0; i<files.length; i++) {
+    let file = files[i];
+    if (file.parents[0] == directoryID)
+      directory[file.id] = beautifyFile(file);
+  }
+  return directory;
+}
+
+let structureDriveList = function(driveList) {
+  let fileSystem = {};
+  let currentDirIds = new Set();
+  // get the root dir
+  for (let i=0; i<driveList.length; i++) {
+    let file = driveList[i];
+    if (file.parents[0].length < 32)
+      fileSystem[file.id] = beautifyFile(file);
+      currentDirIds.add;
+  }
+
+  // do all deeper layers
+  while(driveList.length > 0) {
+    for (let i=0; i<driveList.length; i++) {
+      let file = driveList[i];
+    }
+  }
+  
+}
 
 module.exports = {
 
@@ -35,23 +58,19 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
+    const directoryID = req.body.directoryID;
     return google.files
       .list({
+        q: directoryID + " in parents",
         fields: "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
       })
       .then(result => {
         let files = result.data.files;
-        // sort results so that we can build fs
-        files = files.sort(compareFiles);
-        console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
-        console.log(files);
-        console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
-        let bibbity = {};
+        let bibbity = [];
         for (let i = 0; i < files.length; i++) {
           let entry = files[i];
-          addFileToStructure(bibbity, entry);
+          bibbity.push(beautifyFile(entry));
         }
-      );
     });
   },
 
