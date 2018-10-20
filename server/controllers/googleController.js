@@ -7,6 +7,7 @@ let compareFiles = function(file1, file2) {
 
 let beautifyFile = function(file) {
   return {
+    id: file.id,
     name: file.name,
     type: file.mimeType.split('.').pop(),
     size: file.size,
@@ -59,9 +60,10 @@ module.exports = {
 
   fetch: function(req, res, next) {
     const directoryID = req.body.directoryID;
+    const query = "'" + directoryID + "'" + " in parents";
     return google.files
       .list({
-        q: directoryID + " in parents",
+        q: query,
         fields: "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
       })
       .then(result => {
@@ -71,7 +73,9 @@ module.exports = {
           let entry = files[i];
           bibbity.push(beautifyFile(entry));
         }
-    });
+        res.status(200).send(bibbity);
+      })
+      .catch(err => next(err));
   },
 
   delete: function(req, res, next) {
