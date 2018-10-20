@@ -12,7 +12,7 @@ module.exports = {
           let entry = results.entries[i];
           bibbity.push({
             'name': entry.name,
-            'source': 'dropbox'
+            'service': 'dropbox'
           });
         }
         res.status(200).send(bibbity);

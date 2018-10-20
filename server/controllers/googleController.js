@@ -4,7 +4,7 @@ const google = require('../config/google');
 module.exports = {
   fetchDrive: function(req, res, next) {
     const path = req.body.path;
-    
+
     return google.files.list({path: path})
       .then(results => {
         var bibbity = [];
@@ -12,7 +12,7 @@ module.exports = {
           const entry = results.entries[i];
           bibbity.push({
             'name': entry.name,
-            'source': 'drive'
+            'service': 'drive'
           });
         }
         res.status(200).send(bibbity);
