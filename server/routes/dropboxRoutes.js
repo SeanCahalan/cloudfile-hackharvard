@@ -15,5 +15,6 @@ dropboxRouter.post('/upload', upload.fields([{ name: 'file', maxCount: 1 },
 dropboxRouter.post('/download', dropboxController.download);
 dropboxRouter.post('/folder', dropboxController.createFolder);
 dropboxRouter.delete('/delete', dropboxController.delete);
+dropboxRouter.post('/shareFile', dropboxController.shareFile);
 
 module.exports = dropboxRouter;

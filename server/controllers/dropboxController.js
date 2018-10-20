@@ -1,4 +1,6 @@
 'use strict';
+const User = require('../models/user');
+
 let dropbox;
 
 let splitFileName = function(fileName) {
@@ -33,9 +35,9 @@ module.exports = {
           // separate file name and extension for seano
           let name = splitFileName(entry.name);
           bibbity.push({
-            'id': entry.id.split(':').pop(),
-            'name': name[0],
-            'size': name[1],
+            'id': entry.id,
+            'name': entry.name,
+            'size': entry.size,
             'last_modified': entry.server_modified,
             'service': 'dropbox'
           });
@@ -101,13 +103,12 @@ module.exports = {
   },
 
   shareFile: function(req, res, next) {
-    const file = req.body.file;
+    const file = req.body.file; // this has the format id:gIHVCSMIN0AAAAAAAAADVw
     const fbidToShare = req.body.fbid;
     const access = req.body.access; // can be 'editor' or 'viewer'
-
+    // TODO: right now only access type of editor works
     return User.findOne({ 'facebook.id': fbidToShare })
       .then(user => {
-        console.log(user)
         const dropboxId = user.dropbox.id;
         return dropbox.sharingAddFileMember({
           file: file,
@@ -118,7 +119,7 @@ module.exports = {
           quiet: false,
           access_level: { '.tag': access },
           add_message_as_comment: false
-        })
+        });
       })
       .then(result => res.status(200).send(result))
       .catch(err => next(err))
