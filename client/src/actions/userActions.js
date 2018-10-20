@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { Dropbox } from 'dropbox';
 
-const localUrl = 'http://localhost:3000';
-const appUrl = 'https://cloudfile.localtunnel.me/';
+const appUrl = process.env.NODE_ENV === 'development' ?
+'http://localhost:3000' : 'https://cloudfile.localtunnel.me/';
 
 function setLoginData(fbid, name) {
     localStorage.setItem("fbid", fbid);
@@ -122,7 +122,24 @@ export function addDropbox(){
         const CLIENT_ID='degcrih2vk286xu';
         var dbx = new Dropbox({ clientId: CLIENT_ID });
         localStorage.setItem('serviceToAdd', 'dropbox')
-        const authUrl = dbx.getAuthenticationUrl(localUrl);
+        const authUrl = dbx.getAuthenticationUrl(appUrl);
+        console.log(authUrl);
+        var elem = document.createElement('a');
+        elem.setAttribute('id', 'authlink');
+        elem.classList.add('displayNone');
+        document.querySelector(".body").appendChild(elem)
+        elem.href = authUrl;
+        simulateClick(elem);
+        dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'dropbox'}});
+    }
+}
+
+export function getGoogleToken(){
+    return function(dispatch){
+        const CLIENT_ID='degcrih2vk286xu';
+        var dbx = new Dropbox({ clientId: CLIENT_ID });
+        localStorage.setItem('serviceToAdd', 'google')
+        const authUrl = dbx.getAuthenticationUrl(appUrl);
         console.log(authUrl);
         var elem = document.createElement('a');
         elem.setAttribute('id', 'authlink');

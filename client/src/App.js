@@ -12,7 +12,6 @@ import Main from './components/pages/Main/Main';
 class App extends Component {
     componentDidMount() {
         //parse redirect uri.
-
         const fbid = localStorage.getItem("fbid");
         if (fbid) {
             console.log("have fbid:", fbid)

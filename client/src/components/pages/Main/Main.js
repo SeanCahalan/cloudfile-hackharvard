@@ -5,6 +5,9 @@ import { connect } from 'react-redux';
 import { addDropbox, logout } from '../../../actions/userActions'
 import { fileIcon } from '../../../util/data';
 
+import AddService from './AddService/AddService';
+import ModalContainer from '../../layout/ModalContainer/ModalContainer';
+
 class Main extends Component{
     render(){
 
@@ -32,10 +35,18 @@ class Main extends Component{
                     <div className="name">
                         {this.props.info.name || localStorage.getItem('name')}
                     </div>
-                    <div onClick={this.props.addDropbox}>
-                        Add Dropbox
-                    </div>
-                    <div className="logout" onClick={this.props.logout}>
+                    <ModalContainer
+                        content={
+                            <AddService/>
+                        }
+                    >
+                        <div className="add-service">
+                            Add Service
+                            <i className="fas fa-plus"></i>
+                        </div>
+                    </ModalContainer>
+                    
+                    <div className="list-item logout" onClick={this.props.logout}>
                         Logout
                     </div>
                 </div>
