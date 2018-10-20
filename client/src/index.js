@@ -3,13 +3,15 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter as Router } from 'react-router-dom'
+import axios from 'axios';
 
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, combineReducers } from "redux";
 import logger from "redux-logger"; //logs actions very nicely
 import thunk from "redux-thunk";
 
-// import { clientReducers } from './reducers/clientReducers';
+import { fileReducers } from './reducers/fileReducers';
 import { userReducers } from './reducers/userReducers';
 
 let middleware = [thunk];
@@ -18,7 +20,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 middleware = applyMiddleware(...middleware);
 let reducers = combineReducers({
-    // client: clientReducers,
+    files: fileReducers,
     user: userReducers
 })
 
@@ -31,7 +33,9 @@ const store = createStore(reducers, preloadedState, middleware )
 
 ReactDOM.render(
     <Provider store={store}>
-        <App/>
+        <Router>
+            <App/>
+        </Router>    
     </Provider>
     , document.getElementById('root'));
 
