@@ -1,0 +1,24 @@
+.Dropdown{
+    position: relative;
+    :global{
+        .btn{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .icon{
+            &.hidden{
+                display: none;
+            }
+        }
+        .dropdown{
+            z-index: 100;
+            display: none;
+            position: absolute;
+            &.open{
+                display: flex;
+                flex-direction: column;
+            }
+        }
+    }
+}
