@@ -8,7 +8,7 @@ const config = require("./config/main");
 const express = require("express");
 
 // mongoose config
-/*
+
 const mongoose = require("mongoose");
 mongoose.Promise = Promise;
 
@@ -31,7 +31,7 @@ process.on("SIGINT", () => {
     process.exit(0);
   });
 });
-*/
+
 
 const app = express();
 
@@ -41,5 +41,7 @@ app.use(bodyParser.json());
 
 router(app);
 
-var server = app.listen(config.port);
-console.log("Server listening on port " + config.port + "...");
+
+app.listen(config.port, () => {
+  console.log("Server listening on port " + config.port + "...");
+});
