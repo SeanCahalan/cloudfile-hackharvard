@@ -1,8 +1,19 @@
 'use strict';
-const dropbox = require('../config/dropbox');
+let dropbox;
 
 module.exports = {
+  // path example: "/files/images"
   // path = '' for home directory
+
+  middleware: function(req, res, next) {
+    const user = req.user;
+    if (!user.dropbox.token)
+      return next('User has not added dropbox')
+    if (!dropbox)
+      dropbox = require('../config/dropbox')(user.dropbox.token)
+    return next();
+  },
+
   fetch: function(req, res, next) {
     const path = req.body.path;
     return dropbox.filesListFolder({ path: path })
@@ -12,18 +23,19 @@ module.exports = {
           let entry = results.entries[i];
           bibbity.push({
             'name': entry.name,
+            'size': entry.size,
+            'last_modified': entry.server_modified,
             'service': 'dropbox'
           });
         }
-        res.status(200).send(bibbity);
+        return res.status(200).send(bibbity);
       })
       .catch(err => next(err));
   },
 
-  // path example: "/files/images"
   upload: function(req, res, next) {
     if (!req.files.file[0])
-      return next(new Error('No image provided'));
+      return next(new Error('No file provided'));
     if (!req.body.path)
       return next(new Error('No path provided'))
 
