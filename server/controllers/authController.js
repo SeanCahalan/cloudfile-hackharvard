@@ -22,6 +22,7 @@ module.exports = {
   },
 
   login: function(req, res, next) {
+      console.log(req.headers)
     passport.authenticate("facebook-token", { session: false }, (err, user, info) => {
       if (err) return next(err);
       if (!user) return next(new Error(info[0].error));

@@ -13,6 +13,7 @@ function setLoginData(fbid, name) {
 function removeLoginData() {
     localStorage.removeItem("fbid");
     localStorage.removeItem("name");
+    localStorage.removeItem("fbAccessToken")
     delete axios.defaults.headers.common["Authorization"];
 }
 
@@ -52,42 +53,41 @@ export function logout(){
     };
 }
 
-export function login(fbid){
+export function login(accessToken){
     return function(dispatch){
-        if(fbid){
-            console.log("loggin in with stored fbid")
-            axios.post('/auth/login', {fbid: fbid})
+
+        if(accessToken){
+            axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + accessToken}})
                 .then(res => {
                     console.log(res.data);
-                    dispatch({type: "LOGIN_SUCCESS", payload: res.data})
+                    
+                    dispatch({type: "LOGIN_SUCCESS", payload: res.data })
                 }).catch(err => {
                     console.log(err.data)
                 })
         } else {
             window.FB.login(
                 response => {
+                    console.log(response)
                     if (response.authResponse) {
-                        
+                        let access_token = response.authResponse.accessToken;
+                        localStorage.setItem('fbAccessToken', access_token)
                         // set axios headers to use Bearer auth
                         window.FB.api('/me', function(response) {
                             console.log(response);
                             let fbid = response.id;
                             let name = response.name;
-                            setLoginData(fbid, name);
-        
                             // TODO backend call
-                            axios.post('/auth/login', {fbid: fbid})
+                            setLoginData(fbid, name);
+                            axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + access_token}})
                             .then(res => {
                                 console.log(res.data);
-                                
-                                dispatch({type: "LOGIN_SUCCESS", payload:{ 
-                                    name: response.name
-                                }})
+                                dispatch({type: "LOGIN_SUCCESS", payload: res.data})
                             }).catch(err => {
                                 console.log(err.data)
                             })
                             
-                          });
+                            });
                     } else {
                         console.log(
                             "User cancelled login or did not fully authorize."
@@ -96,9 +96,8 @@ export function login(fbid){
                 },
                 { scope: "email" }
             );
-        }
-        
-    }
+        }  
+    }      
 }
 
 /**
