@@ -10,7 +10,7 @@ module.exports = {
       throw new Error('Auth required')
 
     const fbid = req.headers['authorization'].split(' ')[1]
-    return User.findOne({ fbid: fbid })
+    return User.findOne({ 'facebook.id': fbid })
       .then(user => {
         if (!user)
           throw new Error('You need to login with Facebook');
