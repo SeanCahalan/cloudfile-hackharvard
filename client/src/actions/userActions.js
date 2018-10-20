@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dropbox } from 'dropbox';
 
 const appUrl = process.env.NODE_ENV === 'development' ?
-'http://localhost:3000' : 'https://cloudfile.localtunnel.me/';
+'http://localhost:3000' : 'https://cloudfile.localtunnel.me';
 
 function setLoginData(fbid, name) {
     localStorage.setItem("fbid", fbid);
@@ -71,7 +71,7 @@ export function login(accessToken){
                     console.log(response)
                     if (response.authResponse) {
                         let access_token = response.authResponse.accessToken;
-                        localStorage.setItem('fbAccessToken', access_token)
+                        
                         // set axios headers to use Bearer auth
                         window.FB.api('/me', function(response) {
                             console.log(response);
@@ -81,7 +81,7 @@ export function login(accessToken){
                             setLoginData(fbid, name);
                             axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + access_token}})
                             .then(res => {
-                                console.log(res.data);
+                                localStorage.setItem('fbAccessToken', res.data.facebook.accessToken)
                                 dispatch({type: "LOGIN_SUCCESS", payload: res.data})
                             }).catch(err => {
                                 console.log(err.data)
@@ -150,6 +150,23 @@ export function getGoogleToken(){
     }
 }
 
+function removeHash () { 
+    var scrollV, scrollH, loc = window.location;
+    if ("pushState" in window.history)
+        window.history.pushState("", document.title, loc.pathname + loc.search);
+    else {
+        // Prevent scrolling by storing the page's current scroll offset
+        scrollV = document.body.scrollTop;
+        scrollH = document.body.scrollLeft;
+
+        loc.hash = "";
+
+        // Restore the scroll offset, should be flicker free
+        document.body.scrollTop = scrollV;
+        document.body.scrollLeft = scrollH;
+    }
+}
+
 // for dropbox, body: { token: dropbox_token, service: 'dropbox' }
   /* google drive:
     body: {
@@ -170,6 +187,7 @@ export function addService(params, service){
         }
         axios.post('/api/services', body)
         .then(res => {
+            removeHash();
             console.log(res);
             localStorage.removeItem('serviceToAdd');
             dispatch({type: "ADD_SERVICE", payload: service});
