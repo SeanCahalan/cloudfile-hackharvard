@@ -21,12 +21,13 @@ module.exports = {
     const path = req.body.path;
     return Promise.all([
       dropbox.filesListFolder({ path: path }),
-      dropbox.sharingListReceivedFiles()
+      dropbox.sharingListReceivedFiles(),
+      dropbox.sharingListFolders()
     ])
-    .then(([files, sharedFiles]) => {
+    .then(([owned, sharedFiles, sharedFolders]) => {
       let bibbity = [];
-      for (let i=0; i < files.entries.length; i++) {
-        let entry = files.entries[i];
+      for (let i=0; i < owned.entries.length; i++) {
+        let entry = owned.entries[i];
         bibbity.push({
           'id': entry.id,
           'name': entry.name,
@@ -35,9 +36,11 @@ module.exports = {
           'service': 'dropbox',
         });
       }
+      
       let bibbityShared = [];
-      for (let i=0; i < sharedFiles.entries.length; i++) {
-        let entry = sharedFiles.entries[i];
+      const shared = sharedFiles.entries.concat(sharedFolders.entries)
+      for (let i=0; i < shared.length; i++) {
+        let entry = shared[i];
         bibbityShared.push({
           'id': entry.id,
           'name': entry.name,
