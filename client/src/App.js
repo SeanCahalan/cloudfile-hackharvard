@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import axios from 'axios';
 
-import { fbUpdateStatus } from './actions/userActions';
+import { fbUpdateStatus, login } from './actions/userActions';
 import { dropboxDownload } from './actions/fileActions';
 
 import Login from './components/auth/Login/Login';
@@ -11,10 +11,11 @@ import Main from './components/pages/Main/Main';
 class App extends Component {
     componentDidMount() {
 
-        const token = localStorage.getItem("token");
-        if (token) {
-            console.log("have token:", token)
-            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        const fbid = localStorage.getItem("fbid");
+        if (fbid) {
+            console.log("have fbid:", fbid)
+            axios.defaults.headers.common["Authorization"] = "Bearer " + fbid;
+            this.props.login(fbid);
         }
 
         window.fbAsyncInit = () => {
@@ -69,6 +70,6 @@ function mapStateToProps(state){
     }
 }
 
-const actions = { fbUpdateStatus, dropboxDownload }
+const actions = { fbUpdateStatus, dropboxDownload, login }
 
 export default connect(mapStateToProps, actions)(App);

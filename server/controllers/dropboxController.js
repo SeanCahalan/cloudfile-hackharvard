@@ -15,7 +15,7 @@ module.exports = {
           bibbity.push({
             'name': entry.name,
             'size': entry.size,
-            'last_modified', entry.server_modified,
+            'last_modified': entry.server_modified,
             'service': 'dropbox'
           });
         }

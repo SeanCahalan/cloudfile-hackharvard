@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './Main.scss';
 import { connect } from 'react-redux';
 
-import { addDropbox } from '../../../actions/userActions'
+import { addDropbox, logout } from '../../../actions/userActions'
 
 class Main extends Component{
     render(){
@@ -18,6 +18,9 @@ class Main extends Component{
                     </div>
                     <div onClick={this.props.addDropbox}>
                         Add Dropbox
+                    </div>
+                    <div className="logout" onClick={this.props.logout}>
+                        Logout
                     </div>
                 </div>
 
@@ -36,6 +39,6 @@ function mapStateToProps(state){
     }
 }
 
-const actions = { addDropbox }
+const actions = { addDropbox, logout }
 
 export default connect(mapStateToProps, actions)(Main)

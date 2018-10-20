@@ -11,7 +11,7 @@ class Login extends Component{
                 { this.props.fbLoaded &&
                     <div
                         className="btn fb-login shadow"
-                        onClick={this.props.login}
+                        onClick={() => this.props.login(null)}
                     >
                         Login with Facebook
                     </div>
