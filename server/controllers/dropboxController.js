@@ -89,10 +89,27 @@ module.exports = {
   },
 
   shareFile: function(req, res, next) {
-/*
-    return dropbox.sharingAddFileMember(file, [{ dropbox_id: dropboxId, '.tag': 'dropbox_id' }])
+    const file = req.body.file;
+    const fbidToShare = req.body.fbid;
+    const access = req.body.access; // can be 'editor' or 'viewer'
+
+    return User.findOne({ 'facebook.id': fbidToShare })
+      .then(user => {
+        console.log(user)
+        const dropboxId = user.dropbox.id;
+        return dropbox.sharingAddFileMember({
+          file: file,
+          members: [{
+            dropbox_id: dropboxId,
+            '.tag': 'dropbox_id'
+          }],
+          quiet: false,
+          access_level: { '.tag': access },
+          add_message_as_comment: false
+        })
+      })
       .then(result => res.status(200).send(result))
-      .catch(err => next(err))*/
+      .catch(err => next(err))
   }
 
 
