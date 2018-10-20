@@ -1,20 +1,26 @@
 'use strict';
-  const dropbox = require('../config/dropbox');
-
-// PUT ALL API ROUTE FUNCTIONS HERE
+const google = require('../config/google');
 
 module.exports = {
+  fetchDrive: function(req, res, next) {
+    const path = req.body.path;
 
-  fetchDropbox: function(req, res, next) {
-    return dropbox.filesListFolder({path: ''})
-      .then(results => res.status(200).send(results))
+    return google.files.list({path: path})
+      .then(results => {
+        let bibbity = [];
+        for (i=0; i<results.entries.length; i++) {
+          const entry = results.entries[i];
+          bibbity.push({
+            'name': entry.name,
+            'service': 'drive'
+          });
+        }
+        res.status(200).send(bibbity);
+      })
       .catch(err => next(err));
-
   },
 
-  // TODO: make a more general route for uploading
-  // path example: "/files/images"
-  uploadDropbox: function(req, res, next) {
+  upload: function(req, res, next) {
     if (!req.files.file[0])
       return next(new Error('No image provided'));
     if (!req.body.path)
@@ -22,17 +28,17 @@ module.exports = {
 
     const file = req.files.file[0];
     const path = req.body.path
-    return dropbox.filesUpload({ path: `${path}/${file.originalname}`, contents: file.buffer })
+    return google.PLACEHOLDERDRIVEFUNCTIONAHAHAHAHHHHHHH({ path: `${path}/${file.originalname}`, contents: file.buffer })
       .then(result => res.status(201).send(result))
       .catch(err => next(err));
   },
 
   // this is some whack fuckery but i think it works
-  downloadDropbox: function(req, res, next) {
+  download: function(req, res, next) {
     if (!req.body.path)
       return next(new Error('No path provided'))
     const path = req.body.path;
-    return dropbox.filesDownload({ path: path })
+    return google.PLACEHOLDERDRIVEFUNCTIONAAAAAAHHH({ path: path })
       .then(results => {
         const data = results.fileBinary
         const fileName = results.name;
