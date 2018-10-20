@@ -1,4 +1,6 @@
 'use strict';
+const User = require('../models/user');
+
 let dropbox;
 
 let splitFileName = function(fileName) {
@@ -23,26 +25,45 @@ module.exports = {
     return next();
   },
 
+  // TODO: add shared folders
   fetch: function(req, res, next) {
     const path = req.body.path;
-    return dropbox.filesListFolder({ path: path })
-      .then(results => {
-        let bibbity = [];
-        for (let i=0; i < results.entries.length; i++) {
-          let entry = results.entries[i];
-          // separate file name and extension for seano
-          let name = splitFileName(entry.name);
-          bibbity.push({
-            'id': entry.id.split(':').pop(),
-            'name': name[0],
-            'size': name[1],
-            'last_modified': entry.server_modified,
-            'service': 'dropbox'
-          });
-        }
-        return res.status(200).send(bibbity);
-      })
-      .catch(err => next(err));
+    return Promise.all([
+      dropbox.filesListFolder({ path: path }),
+      dropbox.sharingListReceivedFiles(),
+      dropbox.sharingListFolders()
+    ])
+    .then(([owned, sharedFiles, sharedFolders]) => {
+      let bibbity = [];
+      for (let i=0; i < owned.entries.length; i++) {
+        let entry = owned.entries[i];
+        bibbity.push({
+          'id': entry.id,
+          'name': entry.name,
+          'size': entry.size,
+          'last_modified': entry.server_modified,
+          'service': 'dropbox',
+        });
+      }
+      
+      let bibbityShared = [];
+      const shared = sharedFiles.entries.concat(sharedFolders.entries)
+      for (let i=0; i < shared.length; i++) {
+        let entry = shared[i];
+        bibbityShared.push({
+          'id': entry.id,
+          'name': entry.name,
+          'size': entry.size,
+          'last_modified': entry.server_modified,
+          'service': 'dropbox',
+        });
+      }
+      return res.status(200).send({
+        owned: bibbity,
+        shared: bibbityShared
+      });
+    })
+    .catch(err => next(err));
   },
 
   upload: function(req, res, next) {
@@ -101,13 +122,12 @@ module.exports = {
   },
 
   shareFile: function(req, res, next) {
-    const file = req.body.file;
+    const file = req.body.file; // this has the format id:gIHVCSMIN0AAAAAAAAADVw
     const fbidToShare = req.body.fbid;
     const access = req.body.access; // can be 'editor' or 'viewer'
-
+    // TODO: right now only access type of editor works
     return User.findOne({ 'facebook.id': fbidToShare })
       .then(user => {
-        console.log(user)
         const dropboxId = user.dropbox.id;
         return dropbox.sharingAddFileMember({
           file: file,
@@ -118,7 +138,7 @@ module.exports = {
           quiet: false,
           access_level: { '.tag': access },
           add_message_as_comment: false
-        })
+        });
       })
       .then(result => res.status(200).send(result))
       .catch(err => next(err))

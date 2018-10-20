@@ -1,0 +1,40 @@
+.ModalContainer{
+    
+    :global{
+        .modal-container{
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            display: none;
+            //position: absolute;
+            height: 100vh;
+            width: 100vw;
+            background: rgba(0, 0, 0, 0.4);
+            &.open{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+       .modal{
+            box-shadow: 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            .close{  
+                margin: 1vw;        
+                i{
+                    color: #6386fe; 
+                    filter: box-shadow( 0 3px 6px 0 rgba(0, 0, 0, 0.16));    
+                    font-size: 24px;           
+                }
+            }
+            .content{
+                
+               
+                
+            }
+       }
+    }
+}

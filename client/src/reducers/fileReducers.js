@@ -15,6 +15,11 @@ export function fileReducers(state = initialState, action) {
                 ...state,
                 files: [...state.files, ...action.payload]
             }
+        case "LOGOUT_SUCCESS":
+            return {
+                ...state,
+                files: []
+            };
         default:
             return state;
     }

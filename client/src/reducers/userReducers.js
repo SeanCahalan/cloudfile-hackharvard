@@ -26,6 +26,12 @@ export function userReducers(state = initialState, action) {
                     state: "error"
                 }
             };
+            //
+        case "ADD_SERVICE":
+            return {
+                ...state,
+
+            }
         case "GET_USER_INFO":
             return {
                 ...state,

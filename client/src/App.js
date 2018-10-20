@@ -11,17 +11,20 @@ import Main from './components/pages/Main/Main';
 
 class App extends Component {
     componentDidMount() {
-        //parse redirect uri.
 
-        const fbid = localStorage.getItem("fbid");
-        if (fbid) {
-            console.log("have fbid:", fbid)
+        const fbid = localStorage.getItem('fbid')
+        if(fbid)
             axios.defaults.headers.common["Authorization"] = "Bearer " + fbid;
-            this.props.login(fbid);
-        }
 
+        // get additional login data
+        const fbAccessToken = localStorage.getItem('fbAccessToken')
+        console.log(fbid, fbAccessToken)
+        if(fbAccessToken)
+            this.props.login(fbAccessToken)
+
+        //parse redirect uri.
         const location = this.props.location;
-        if(location.hash){
+        if(location.hash && fbid){
             let hashMap = {}
             location.hash.replace('#','').split('&').forEach(item => {
                 let key_value = item.split('=');
@@ -61,6 +64,17 @@ class App extends Component {
         if(!prevProps.user.info && this.props.user.info){
             this.props.dropboxFetch();
         }
+
+        // this is the more proper way with fb login
+
+        // if(!prevProps.user.fbLoaded && this.props.user.fbLoaded){      
+        //     window.FB.getLoginStatus((response) => {
+        //         console.log(response)
+        //         if (response && response.status === "connected") {
+        //            this.props.login(response.authResponse.accessToken)
+        //         }
+        //     });
+        // }
     }
 
     render() {

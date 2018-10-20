@@ -10,7 +10,6 @@ module.exports = {
       throw new Error('Auth required')
 
     const fbid = req.headers['authorization'].split(' ')[1]
-    console.log(fbid)
     return User.findOne({ 'facebook.id': fbid })
       .then(user => {
         if (!user)
@@ -23,6 +22,7 @@ module.exports = {
   },
 
   login: function(req, res, next) {
+      console.log(req.headers)
     passport.authenticate("facebook-token", { session: false }, (err, user, info) => {
       if (err) return next(err);
       if (!user) return next(new Error(info[0].error));

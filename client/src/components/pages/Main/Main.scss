@@ -1,16 +1,66 @@
 .Main{
     height: 100%;
     display: flex;
+    font-size: 1.3vw;
     :global{
         .sidebar{
-            padding: 2vw;
+            padding: 1vw;
+            padding-left: 0;
             width: 20vw;
             min-width: 180px;
             box-shadow: 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
+            
+            .list-item{
+                height: 3vw;
+                display: flex;
+                align-items: center;
+                margin-right: 4vw;
+                padding: 1vw 0;
+                margin-left: 1vw;
+                cursor: pointer;
+                &:hover{
+                    margin-left: 0;
+                    padding-left: 1vw;
+                    background: #ddd;
+                    border-top-right-radius: 1.5vw;
+                    border-bottom-right-radius: 1.5vw;
+                }
+            }
+            .name{
+                margin-left: 1vw;
+            }
             .logo{
+                margin-left: 1vw;
+                cursor: pointer;
                 font-size: 2.4vw;
                 font-weight: bold;
                 margin-bottom: 2vw;
+            }
+            .add-service{
+                margin: 2vw 0;
+                margin-left: 1vw;
+                margin-right: 4vw;
+                cursor: pointer;
+                display: flex;
+                flex: 1;
+                align-items: center;
+                padding: 0 2vw;
+                height: 4vw;
+                border-radius: 2vw;
+                box-shadow: 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
+                i{
+                    margin-left: auto;
+                }
+                &:hover{
+                    margin-left: 0;
+                    padding-left: 3vw;
+                    background: #ddd;
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                }
+            }
+            .logout{
+                
             }
         }
         .body{
