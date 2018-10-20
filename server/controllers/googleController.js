@@ -35,6 +35,7 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
+<<<<<<< HEAD
     fs.readFile(TOKEN_PATH, (err, token) => {
       const auth = oAuth2Client.setCredentials(JSON.parse(token));
       const drive = google.drive({ version: "v3", auth });
@@ -53,6 +54,23 @@ module.exports = {
             addFileToStructure(fileStructure, entry);
           }
           res.status(200).send(fileStructure);
+=======
+    return google.files
+      .list({
+        fields: "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
+      })
+      .then(result => {
+        let files = result.data.files;
+        // sort results so that we can build fs
+        files = files.sort(compareFiles);
+        console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
+        console.log(files);
+        console.log('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n');
+        let bibbity = {};
+        for (let i = 0; i < files.length; i++) {
+          let entry = files[i];
+          addFileToStructure(bibbity, entry);
+>>>>>>> Working commit
         }
       );
     });
