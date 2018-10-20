@@ -1,6 +1,51 @@
 "use strict";
 let google;
 
+let compareFiles = function(file1, file2) {
+  return file1.parents.length - file2.parents.length;
+};
+
+let beautifyFile = function(file) {
+  return {
+    id: file.id,
+    name: file.name,
+    type: file.mimeType.split('.').pop(),
+    size: file.size,
+    lastModified: file.modifiedTime,
+    service: 'google'
+  }
+}
+
+let populateDirectory = function(directoryID, files) {
+  directory = {};
+  for (let i=0; i<files.length; i++) {
+    let file = files[i];
+    if (file.parents[0] == directoryID)
+      directory[file.id] = beautifyFile(file);
+  }
+  return directory;
+}
+
+let structureDriveList = function(driveList) {
+  let fileSystem = {};
+  let currentDirIds = new Set();
+  // get the root dir
+  for (let i=0; i<driveList.length; i++) {
+    let file = driveList[i];
+    if (file.parents[0].length < 32)
+      fileSystem[file.id] = beautifyFile(file);
+      currentDirIds.add;
+  }
+
+  // do all deeper layers
+  while(driveList.length > 0) {
+    for (let i=0; i<driveList.length; i++) {
+      let file = driveList[i];
+    }
+  }
+  
+}
+
 module.exports = {
   middleware: function(req, res, next) {
     const user = req.user;
@@ -11,23 +56,21 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
+    const directoryID = req.body.directoryID;
+    const query = "'" + directoryID + "'" + " in parents";
     return google.files
       .list({
-        fields: "nextPageToken, files(id, name, parents, mimeType)"
+        q: query,
+        fields: "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
       })
       .then(result => {
-        const files = result.data.files;
+        let files = result.data.files;
         let bibbity = [];
         for (let i = 0; i < files.length; i++) {
           let entry = files[i];
-          bibbity.push({
-            fileid: entry.id,
-            name: entry.name,
-            service: "google"
-          });
+          bibbity.push(beautifyFile(entry));
         }
-
-        return res.status(200).send(bibbity);
+        res.status(200).send(bibbity);
       })
       .catch(err => next(err));
   },
