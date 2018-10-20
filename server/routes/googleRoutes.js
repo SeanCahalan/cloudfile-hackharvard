@@ -6,5 +6,6 @@ const googleRouter = express.Router();
 googleRouter.use(googleController.middleware)
 
 googleRouter.post('/fetch', googleController.fetch);
+googleRouter.delete('/delete', googleController.delete);
 
 module.exports = googleRouter;

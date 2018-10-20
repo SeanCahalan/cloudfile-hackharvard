@@ -9,5 +9,5 @@ module.exports = function(googleConfig) {
   );
 
   oAuth2Client.setCredentials(googleConfig)
-  return google.drive({ version: "v3", oAuth2Client });
+  return google.drive({ version: "v3", auth: oAuth2Client });
 }
