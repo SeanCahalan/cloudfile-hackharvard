@@ -1,9 +1,18 @@
 'use strict';
-const dropbox = require('../config/dropbox');
+let dropbox;
 
 module.exports = {
   // path example: "/files/images"
   // path = '' for home directory
+
+  middleware: function(req, res, next) {
+    const user = req.user;
+    if (!user.dropbox.token)
+      return next('User has not added dropbox')
+    if (!dropbox)
+      dropbox = require('../config/dropbox')(user.dropbox.token)
+    return next();
+  },
 
   fetch: function(req, res, next) {
     const path = req.body.path;

@@ -5,6 +5,10 @@ const multer  = require('multer')
 const upload = multer()
 
 const dropboxRouter = express.Router();
+
+// activate dropbox sdk
+dropboxRouter.use(dropboxController.middleware);
+
 dropboxRouter.post('/fetch', dropboxController.fetch);
 dropboxRouter.post('/upload', upload.fields([{ name: 'file', maxCount: 1 },
   { name: 'path', maxCount: 1 }]), dropboxController.upload);
