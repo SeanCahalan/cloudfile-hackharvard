@@ -47,13 +47,10 @@ let structureDriveList = function(driveList) {
 }
 
 module.exports = {
-
   middleware: function(req, res, next) {
     const user = req.user;
-    if (!user.google.access_token)
-      return next('User has not added google')
-    if (!google)
-      google = require('../config/google')(user.google)
+    if (!user.google.access_token) return next("User has not added google");
+    if (!google) google = require("../config/google")(user.google);
 
     return next();
   },
@@ -81,8 +78,9 @@ module.exports = {
   delete: function(req, res, next) {
     const fileId = req.body.file;
 
-    return google.files.delete({ fileId })
+    return google.files
+      .delete({ fileId })
       .then(result => res.status(200).send(result.data))
-      .catch(err => next(err))
+      .catch(err => next(err));
   }
 };
