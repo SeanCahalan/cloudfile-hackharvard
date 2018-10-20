@@ -8,6 +8,12 @@ const UserSchema = new Schema({
   fbid: {
     type: String,
     required: true
+  },
+  dropbox: {
+    token: String
+  },
+  google: {
+    token: String
   }
 }, { timestamps: true });
 
