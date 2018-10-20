@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter as Router } from 'react-router-dom'
 import axios from 'axios';
 
 import { Provider } from 'react-redux';
@@ -32,7 +33,9 @@ const store = createStore(reducers, preloadedState, middleware )
 
 ReactDOM.render(
     <Provider store={store}>
-        <App/>
+        <Router>
+            <App/>
+        </Router>    
     </Provider>
     , document.getElementById('root'));
 

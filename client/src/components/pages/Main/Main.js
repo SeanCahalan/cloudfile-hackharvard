@@ -14,7 +14,7 @@ class Main extends Component{
                         CLOUD FILE
                     </div>
                     <div className="name">
-                        {this.props.info.name}
+                        {this.props.info.name || localStorage.getItem('name')}
                     </div>
                     <div onClick={this.props.addDropbox}>
                         Add Dropbox
