@@ -17,6 +17,8 @@ const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const paths = require('./paths');
 const getClientEnvironment = require('./env');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+const autoprefixer = require("autoprefixer");
+
 
 
 // Webpack uses `publicPath` to determine where the app is being served from.
@@ -367,13 +369,40 @@ module.exports = {
           {
             test: sassRegex,
             exclude: sassModuleRegex,
-            loader: getStyleLoaders(
-              {
-                importLoaders: 2,
-                sourceMap: shouldUseSourceMap,
-              },
-              'sass-loader'
-            ),
+            loader: [
+                "css-hot-loader",
+                require.resolve("style-loader"),
+                {
+                    loader: require.resolve("css-loader"),
+                    options: {
+                        importLoaders: 1,
+                        modules: true,
+                        localIdentName:
+                            "[name]_[local]__[hash:base64:4]"
+                    }
+                },
+                {
+                    loader: require.resolve("postcss-loader"),
+                    options: {
+                        // Necessary for external CSS imports to work
+                        // https://github.com/facebookincubator/create-react-app/issues/2677
+                        ident: "postcss",
+                        plugins: () => [
+                            require("postcss-flexbugs-fixes"),
+                            autoprefixer({
+                                browsers: [
+                                    ">1%",
+                                    "last 4 versions",
+                                    "Firefox ESR",
+                                    "not ie < 9" // React doesn't support IE8 anyway
+                                ],
+                                flexbox: "no-2009"
+                            })
+                        ]
+                    }
+                },
+                "sass-loader"
+            ],
             // Don't consider CSS imports dead code even if the
             // containing package claims to have no side effects.
             // Remove this when webpack adds a warning or an error for this.
