@@ -64,6 +64,16 @@ module.exports = {
     return dropbox.filesDelete({ path: path })
       .then(result => res.status(201).send(result))
       .catch(err => next(err));
+  },
+
+  createFolder: function(req, res, next) {
+    if (!req.body.path)
+      return next(new Error('No path provided'));
+
+    const path = req.body.path;
+    return dropbox.filesCreateFolder({ path: path })
+      .then(result => res.status(201).send(result))
+      .catch(err => next(err))
   }
 
 
