@@ -8,6 +8,7 @@ const UserSchema = new Schema({
   facebook: {
     id: { type: String, require: true },
     accessToken: { type: String, require: true },
+    displayName: String,
     email: String,
     expiresOn: Date
   },
