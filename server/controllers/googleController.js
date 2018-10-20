@@ -2,10 +2,10 @@
 const google = require('../config/google');
 
 module.exports = {
-  fetchDrive: function(req, res, next) {
+  fetch: function(req, res, next) {
     return drive.files.list({path: req.body.path})
       .then(results => {
-        var bibbity = [];
+        let bibbity = [];
         for (i=0; i<results.entries.length; i++) {
           const entry = results.entries[i];
           bibbity.push({
@@ -20,7 +20,7 @@ module.exports = {
       .catch(err => next(err));
   },
 
-  uploadDrive: function(req, res, next) {
+  upload: function(req, res, next) {
     if (!req.files.file[0])
       return next(new Error('No image provided'));
     if (!req.body.path)
@@ -34,7 +34,7 @@ module.exports = {
   },
 
   // this is some whack fuckery but i think it works
-  downloadDrive: function(req, res, next) {
+  download: function(req, res, next) {
     if (!req.body.path)
       return next(new Error('No path provided'))
     const path = req.body.path;
