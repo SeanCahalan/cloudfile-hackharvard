@@ -97,5 +97,91 @@ module.exports = {
       })
       .then(result => res.status(200).send(result.data))
       .catch(err => next(err));
+  },
+
+  download: function(req, res, next) {
+    // var fileId = "0BwwA4oUTeiV1UVNwOHItT0xfa2M";
+    // var dest = fs.createWriteStream("/tmp/photo.jpg");
+    // drive.files
+    //   .get({
+    //     fileId: fileId,
+    //     alt: "media"
+    //   })
+    //   .on("end", function() {
+    //     console.log("Done");
+    //   })
+    //   .on("error", function(err) {
+    //     console.log("Error during download", err);
+    //   })
+    //   .pipe(dest);
+  },
+
+  upload: function(req, res, next) {
+    // var fileMetadata = {
+    //   'name': 'photo.jpg'
+    // };
+    // var media = {
+    //   mimeType: 'image/jpeg',
+    //   body: fs.createReadStream('files/photo.jpg')
+    // };
+    // drive.files.create({
+    //   resource: fileMetadata,
+    //   media: media,
+    //   fields: 'id'
+    // }, function (err, file) {
+    //   if (err) {
+    //     // Handle error
+    //     console.error(err);
+    //   } else {
+    //     console.log('File Id: ', file.id);
+    //   }
+    // });
+  },
+
+  shareFile: function(req, res, next) {
+    // var fileId = req.body.fileId;
+    // var permissions = [
+    //   {
+    //     type: "user",
+    //     role: "writer",
+    //     emailAddress: "user@example.com"
+    //   },
+    //   {
+    //     type: "domain",
+    //     role: "writer",
+    //     domain: "example.com"
+    //   }
+    // ];
+    // // Using the NPM module 'async'
+    // async.eachSeries(
+    //   permissions,
+    //   function(permission, permissionCallback) {
+    //     drive.permissions.create(
+    //       {
+    //         resource: permission,
+    //         fileId: fileId,
+    //         fields: "id"
+    //       },
+    //       function(err, res) {
+    //         if (err) {
+    //           // Handle error...
+    //           console.error(err);
+    //           permissionCallback(err);
+    //         } else {
+    //           console.log("Permission ID: ", res.id);
+    //           permissionCallback();
+    //         }
+    //       }
+    //     );
+    //   },
+    //   function(err) {
+    //     if (err) {
+    //       // Handle error
+    //       console.error(err);
+    //     } else {
+    //       // All permissions inserted
+    //     }
+    //   }
+    // );
   }
 };
