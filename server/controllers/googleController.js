@@ -35,26 +35,6 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
-<<<<<<< HEAD
-    fs.readFile(TOKEN_PATH, (err, token) => {
-      const auth = oAuth2Client.setCredentials(JSON.parse(token));
-      const drive = google.drive({ version: "v3", auth });
-      drive.files.list(
-        {
-          fields: "nextPageToken, files(id, name, parents, mimeType)"
-        },
-        (err, res) => {
-          if (err) return console.log("The API returned an error: " + err);
-          let files = res.data.files;
-          // sort files before putting them in the json
-          files = files.sort(compareFiles);
-          let fileStructure = {};
-          for (let i = 0; i < files.length; i++) {
-            let entry = files[i];
-            addFileToStructure(fileStructure, entry);
-          }
-          res.status(200).send(fileStructure);
-=======
     return google.files
       .list({
         fields: "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
@@ -70,7 +50,6 @@ module.exports = {
         for (let i = 0; i < files.length; i++) {
           let entry = files[i];
           addFileToStructure(bibbity, entry);
->>>>>>> Working commit
         }
       );
     });
