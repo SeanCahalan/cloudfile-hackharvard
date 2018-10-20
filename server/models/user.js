@@ -11,6 +11,7 @@ const UserSchema = new Schema({
     expiresOn: Date
   },
   dropbox: {
+    id: String,
     token: String
   },
   google: {
