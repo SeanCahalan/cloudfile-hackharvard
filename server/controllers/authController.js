@@ -29,7 +29,7 @@ module.exports = {
           const user = new User({ fbid: fbid });
           return user.save()
         }
-        return Promise.resolve(user);
+        return Promise.resolve(existingUser);
       })
       .then(user => res.status(200).send(user))
       .catch(err => next(err));
