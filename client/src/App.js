@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
+import axios from 'axios';
 
 import { fbUpdateStatus } from './actions/userActions';
+import { dropboxDownload } from './actions/fileActions';
 
 import Login from './components/auth/Login/Login';
 import Main from './components/pages/Main/Main';
 
 class App extends Component {
     componentDidMount() {
+
+        const token = localStorage.getItem("token");
+        if (token) {
+            console.log("have token:", token)
+            axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        }
 
         window.fbAsyncInit = () => {
             window.FB.init({
@@ -30,6 +38,12 @@ class App extends Component {
             js.src = "https://connect.facebook.net/en_US/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         })(document, "script", "facebook-jssdk");
+    }
+
+    componentDidUpdate(prevProps){
+        if(!prevProps.user.info && this.props.user.info){
+            this.props.dropboxDownload();
+        }
     }
 
     render() {
@@ -55,6 +69,6 @@ function mapStateToProps(state){
     }
 }
 
-const actions = { fbUpdateStatus }
+const actions = { fbUpdateStatus, dropboxDownload }
 
 export default connect(mapStateToProps, actions)(App);

@@ -4,10 +4,14 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:client": "cd client && npm start",
-    "start:server": "cd server && npm start",
-    "start": "start:client && start:server",
-    "dev": "concurrently \"cd server && nodemon index.js\" \"cd client && yarn start\""
+    "startclient": "cd client && npm start",
+    "startserver": "cd server && npm start",
+    "startserverprod": "cd server && cross-env PORT=4000 NODE_ENV=production nodemon index.js",
+    "start": "npm startclient && npm startserver",
+    "dev": "concurrently \"cd server && nodemon index.js\" \"cd client && npm start\"",
+    "lt": "lt --port 4000 --subdomain cloudfile",
+    "buildclient": "cd client && yarn run build",
+    "deploy": "yarn buildclient && yarn startserverprod && yarn lt"
   },
   "author": "",
   "license": "ISC",

@@ -14,6 +14,7 @@
     "body-parser": "^1.18.3",
     "dotenv": "^6.1.0",
     "dropbox": "^4.0.12",
+    "ejs": "^2.6.1",
     "express": "^4.16.4",
     "http-proxy": "^1.17.0",
     "isomorphic-fetch": "^2.2.1",

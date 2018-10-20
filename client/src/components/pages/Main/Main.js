@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import styles from './Main.scss';
 import { connect } from 'react-redux';
 
+import { addDropbox } from '../../../actions/userActions'
+
 class Main extends Component{
     render(){
         return(
@@ -14,10 +16,13 @@ class Main extends Component{
                     <div className="name">
                         {this.props.info.name}
                     </div>
+                    <div onClick={this.props.addDropbox}>
+                        Add Dropbox
+                    </div>
                 </div>
 
                 <div className="body col">
-                
+
                 </div>
 
             </div>
@@ -31,6 +36,6 @@ function mapStateToProps(state){
     }
 }
 
-const actions = {  }
+const actions = { addDropbox }
 
 export default connect(mapStateToProps, actions)(Main)
