@@ -4,10 +4,6 @@
 // PUT ALL API ROUTE FUNCTIONS HERE
 
 module.exports = {
-  test: function(req, res, next) {
-    console.log(req.user)
-    return res.status(200).send(req.user);
-  },
 
   dropbox: function(req, res, next) {
     return dropbox.filesListFolder({path: ''})
@@ -16,7 +12,7 @@ module.exports = {
 
   },
 
-  // TODO: make a more general route,
+  // TODO: make a more general route for uploading
   // path example: "/files/images"
   uploadDropbox: function(req, res, next) {
     if (!req.files.file[0])
