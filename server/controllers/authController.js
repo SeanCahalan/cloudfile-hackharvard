@@ -1,5 +1,7 @@
 'use strict';
 const User = require('../models/user');
+const facebook = require('../config/facebook');
+const passport = require("../config/passport");
 
 module.exports = {
 
@@ -8,10 +10,11 @@ module.exports = {
       throw new Error('Auth required')
 
     const fbid = req.headers['authorization'].split(' ')[1]
-    return User.findOne({ fbid: fbid })
+    return User.findOne({ 'facebook.id': fbid })
       .then(user => {
         if (!user)
           throw new Error('You need to login with Facebook');
+
         req.user = user;
         return next();
       })
@@ -19,20 +22,12 @@ module.exports = {
   },
 
   login: function(req, res, next) {
-
-    const fbid = req.body.fbid;
-
-    return User.findOne({ fbid: fbid })
-      .then(existingUser => {
-        if (!existingUser) {
-          console.log('creating new user');
-          const user = new User({ fbid: fbid });
-          return user.save()
-        }
-        return Promise.resolve(existingUser);
-      })
-      .then(user => res.status(200).send(user))
-      .catch(err => next(err));
-  },
+    passport.authenticate("facebook-token", { session: false }, (err, user, info) => {
+      if (err) return next(err);
+      if (!user) return next(new Error(info[0].error));
+      return res.status(201).send(user);
+    }
+  )(req, res, next);
+},
 
 }
