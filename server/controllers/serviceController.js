@@ -1,8 +1,4 @@
 'use strict';
-  const dropbox = require('../config/dropbox');
-
-// PUT ALL API ROUTE FUNCTIONS HERE
-
 module.exports = {
   addService: function(req, res, next) {
     const service = req.body.service;
