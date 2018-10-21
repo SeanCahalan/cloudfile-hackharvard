@@ -71,7 +71,7 @@ export function login(accessToken){
                     console.log(response)
                     if (response.authResponse) {
                         let access_token = response.authResponse.accessToken;
-                        
+                        console.log(access_token);
                         // set axios headers to use Bearer auth
                         window.FB.api('/me', function(response) {
                             console.log(response);
@@ -94,7 +94,7 @@ export function login(accessToken){
                         );
                     }
                 },
-                { scope: "email" }
+                { scope: "email,user_birthday,user_friends" }
             );
         }  
     }      
