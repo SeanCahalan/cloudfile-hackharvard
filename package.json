@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "engines": {
-    "node": ">=8.12.0"
+    "node": "8.12.0"
     },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "startclient": "cd client && npm start",
     "startserver": "cd server && npm start",
     "startserverprod": "cd server && cross-env PORT=4000 NODE_ENV=production nodemon index.js",
-    "start": "npm startserver",
+    "start": "npm run-script startserver",
     "dev": "concurrently \"cd server && nodemon index.js\" \"cd client && npm start\"",
     "lt": "lt --port 4000 --subdomain cloudfile",
     "buildclient": "cd client && npm run-script build",
-    "heroku-postbuild": "npm buildclient"
+    "heroku-postbuild": "npm run-script buildclient"
   },
   "author": "",
   "license": "ISC",
