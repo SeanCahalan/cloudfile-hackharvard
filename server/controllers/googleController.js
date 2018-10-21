@@ -186,11 +186,11 @@ module.exports = {
   },
 
   getSpace: function(req, res, next) {
-    return drive.about.get()
+    return google.about.get({fields: "storageQuota"})
       .then(result => {
         return res.status(200).send({
-          used: result.storageQuota.usage,
-          total: result.storageQuota.limit
+          used: Math.round(result.data.storageQuota.usage/10000000)/100,
+          total: Math.round(result.data.storageQuota.limit/10000000)/100
         });
       })
       .catch(err => next(err))
