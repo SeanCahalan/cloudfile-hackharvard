@@ -2,6 +2,9 @@
   "name": "cloudfile",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": ">=8.12.0"
+    },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "startclient": "cd client && npm start",
@@ -11,7 +14,7 @@
     "dev": "concurrently \"cd server && nodemon index.js\" \"cd client && npm start\"",
     "lt": "lt --port 4000 --subdomain cloudfile",
     "buildclient": "cd client && yarn run build",
-    "deploy": "yarn buildclient && yarn startserverprod && yarn lt"
+    "heroku-postbuild": "yarn buildclient"
   },
   "author": "",
   "license": "ISC",
