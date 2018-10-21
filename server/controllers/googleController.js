@@ -1,5 +1,5 @@
 "use strict";
-const fs = require("fs");
+const User = require('../models/user');
 const stream = require("stream");
 let google;
 
@@ -163,7 +163,9 @@ module.exports = {
           fields: "id"
         });
       })
-      .then(result => res.status(200).send(result))
+      .then(result => {
+        res.status(200).send(result.data.id);
+      })
       .catch(err => next(err));
   },
 
