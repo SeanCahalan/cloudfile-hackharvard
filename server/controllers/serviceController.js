@@ -1,6 +1,6 @@
-const {google} = require("googleapis");
-
 'use strict';
+const {google} = require("googleapis");
+const facebook = require('../config/facebook');
 let dropbox;
 
 function getDropboxId(user) {
@@ -97,5 +97,13 @@ module.exports = {
                 console.log(err)
             res.send(token);
         });
+    },
+
+    getFbFriends: function(req, res, next) {
+      const accessToken = req.user.facebook.accessToken
+      return facebook.api('me/friends', { access_token: accessToken })
+        .then(results => res.status(200).send(results.data))
+        .catch(err => next(err));
+
     }
 };
