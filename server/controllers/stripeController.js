@@ -3,8 +3,6 @@ const stripe = require('../config/stripe');
 const User = require('../models/user');
 const SaleRequest = require('../models/saleRequest');
 
-//2126037080774659
-
 function shareDropbox(fileId, fileSender, fileReceiver) {
   const dropbox = require('../config/dropbox')(fileSender.dropbox.token)
 
