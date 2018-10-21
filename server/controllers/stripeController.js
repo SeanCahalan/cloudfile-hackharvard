@@ -3,8 +3,6 @@ const stripe = require('../config/stripe');
 const User = require('../models/user');
 const SaleRequest = require('../models/saleRequest');
 
-//2126037080774659
-
 function shareDropbox(fileId, fileSender, fileReceiver) {
   const dropbox = require('../config/dropbox')(fileSender.dropbox.token)
 
@@ -143,15 +141,12 @@ module.exports = {
       return next(new Error('You need a payment method to purchase files'));
 
     let saleRequest;
-    return SaleRequest.findOne(requestId)
+    return SaleRequest.findById(requestId)
       .populate('receiver').exec()
       .then(result => {
         saleRequest = result;
-        if (saleRequest.sender !== user.id)
+        if (saleRequest.sender.toString() !== user.id)
           throw new Error('You can only accept sale requests you have received');
-
-        console.log('sale request')
-        console.log(saleRequest)
 
         const receiverCreds = saleRequest.receiver.credentials;
 
@@ -163,9 +158,6 @@ module.exports = {
         })
       })
       .then(result => {
-        console.log('stripe result')
-        console.log(result)
-
         return (saleRequest.service === 'dropbox' ?
           shareDropbox(saleRequest.file, saleRequest.receiver, user) :
           shareGoogle(saleRequest.file, saleRequest.receiver, user))

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styles from './AddService.scss';
 import { connect } from 'react-redux';
 
-import { addDropbox, getGoogleToken } from '../../../../actions/userActions'
+import { addDropbox, addGoogle } from '../../../../actions/userActions'
 
 class AddService extends Component{
     render(){
@@ -12,7 +12,7 @@ class AddService extends Component{
         }
         let actions = {
             'dropbox': this.props.addDropbox,
-            'google': this.props.getGoogleToken
+            'google': this.props.addGoogle
         }
         let options = ['dropbox','google'].map(service => {
             return(
@@ -42,6 +42,6 @@ function mapStateToProps(state){
     }
 }
 
-const actions = { addDropbox, getGoogleToken }
+const actions = { addDropbox, addGoogle }
 
 export default connect(mapStateToProps, actions)(AddService);

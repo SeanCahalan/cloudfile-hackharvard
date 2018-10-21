@@ -21,7 +21,6 @@ function exchangeFacebookToken(user) {
 
       user.facebook.accessToken = longLivedToken;
       user.facebook.expiresOn = today.addDays(expiry / 86400);
-      console.log('token exchanged')
       return user.save();
     });
 }
@@ -41,12 +40,10 @@ const fbLogin = new FacebookTokenStrategy(fbCredentials, function(
 
   // if user is new, save,
   // if user is already in db, return user
-  let isNew = true;
   return User.findOne({ "facebook.id": profile.id })
     .then(existingUser => {
       if (existingUser) {
         existingUser.facebook.accessToken = accessToken;
-        isNew = false;
         return existingUser.save();
       }
       let user = new User({
@@ -61,10 +58,7 @@ const fbLogin = new FacebookTokenStrategy(fbCredentials, function(
       return user.save();
     })
     .then(user => exchangeFacebookToken(user))
-    .then(user => {
-      user.isNew = isNew;
-      done(null, user)
-    })
+    .then(user => done(null, user))
     .catch(err => done(err, false));
 });
 

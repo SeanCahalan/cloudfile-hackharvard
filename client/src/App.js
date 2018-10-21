@@ -3,15 +3,15 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 
-import { fbUpdateStatus, login, addService } from './actions/userActions';
-import { dropboxDownload, dropboxFetch } from './actions/fileActions';
+import { fbUpdateStatus, login, addService, getGoogleToken } from './actions/userActions';
+import { dropboxDownload, dropboxFetch, googleFetch } from './actions/fileActions';
 
 import Login from './components/auth/Login/Login';
 import Main from './components/pages/Main/Main';
 
 class App extends Component {
     componentDidMount() {
-
+        console.log(process.env)
         const fbid = localStorage.getItem('fbid')
         if(fbid)
             axios.defaults.headers.common["Authorization"] = "Bearer " + fbid;
@@ -24,6 +24,7 @@ class App extends Component {
 
         //parse redirect uri.
         const location = this.props.location;
+        console.log(location)
         if(location.hash && fbid){
             let hashMap = {}
             location.hash.replace('#','').split('&').forEach(item => {
@@ -35,11 +36,21 @@ class App extends Component {
             console.log("ADD SERVICE:", service, access_token)
 
             this.props.addService({token: access_token}, service);
+        } else if(location.search){
+            console.log('query:', location.search);
+            let hashMap = {}
+            location.search.replace('?','').split('&').forEach(item => {
+                let key_value = item.split('=');
+                hashMap[key_value[0]] = key_value[1];
+            });
+            let code = hashMap.code;
+            this.props.getGoogleToken(code);
+
         }
 
         window.fbAsyncInit = () => {
             window.FB.init({
-                appId: '325135954735646',
+                appId: process.env.FACEBOOK_APP_ID,
                 autoLogAppEvents: true,
                 xfbml: true,
                 version: "v3.1"
@@ -63,7 +74,10 @@ class App extends Component {
     componentDidUpdate(prevProps){
         if(!prevProps.user.info && this.props.user.info){
             this.props.dropboxFetch();
+            if(this.props.user.info.google)
+                this.props.googleFetch('root', this.props.user.info.google.access_token);
         }
+
 
         // this is the more proper way with fb login
 
@@ -96,7 +110,8 @@ class App extends Component {
 
 function mapStateToProps(state){
     return {
-        user: state.user
+        user: state.user,
+
     }
 }
 
@@ -105,7 +120,9 @@ const actions = {
     dropboxDownload,
     login,
     addService,
-    dropboxFetch
+    dropboxFetch,
+    googleFetch,
+    getGoogleToken
 }
 
 export default withRouter(connect(mapStateToProps, actions)(App));

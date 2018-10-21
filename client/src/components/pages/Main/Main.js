@@ -7,6 +7,8 @@ import { fileIcon } from '../../../util/data';
 
 import AddService from './AddService/AddService';
 import ModalContainer from '../../layout/ModalContainer/ModalContainer';
+import AddPaymentMethod from '../../stripe/AddPaymentMethod/AddPaymentMethod';
+import AddPayoutMethod from '../../stripe/AddPayoutMethod/AddPayoutMethod';
 
 class Main extends Component{
     render(){
@@ -41,26 +43,52 @@ class Main extends Component{
             <div className={styles.Main}>
 
                 <div className="sidebar col">
+
                     <div className="logo">
                         CLOUD FILE
                     </div>
+
                     <div className="name">
                         {this.props.info.name || localStorage.getItem('name')}
                     </div>
+
                     <ModalContainer
                         content={
                             <AddService/>
                         }
                     >
-                        <div className="add-service">
+                        <div className="action add-service">
                             Add Service
                             <i className="fas fa-plus"></i>
                         </div>
                     </ModalContainer>
-                    
+
+                    <ModalContainer
+                        content={
+                            <AddPaymentMethod/>
+                        }
+                    >
+                        <div className="action add-payment">
+                            Add Payment Method
+                            <i className="fas fa-plus"></i>
+                        </div>
+                    </ModalContainer>
+
+                    <ModalContainer
+                        content={
+                            <AddPayoutMethod/>
+                        }
+                    >
+                        <div className="action add-payout">
+                            Add Payout Method
+                            <i className="fas fa-plus"></i>
+                        </div>
+                    </ModalContainer>
+
                     <div className="list-item logout" onClick={this.props.logout}>
                         Logout
                     </div>
+
                 </div>
 
                 <div className="body col">

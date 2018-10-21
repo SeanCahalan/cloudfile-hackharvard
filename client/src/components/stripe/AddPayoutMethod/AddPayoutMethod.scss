@@ -1,0 +1,13 @@
+.AddPayoutMethod{
+    :global{
+       
+        input{
+            &[name="country"]{
+                width: 80px !important;
+            }
+            &[name="currency"]{
+                width: 70px !important;
+            }
+        }
+    }
+}

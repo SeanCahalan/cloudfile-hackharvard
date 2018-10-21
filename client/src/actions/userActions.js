@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dropbox } from 'dropbox';
 
 const appUrl = process.env.NODE_ENV === 'development' ?
-'http://localhost:3000' : 'https://cloudfile.localtunnel.me';
+'http://localhost:3000' : process.env.APP_URL;
 
 function setLoginData(fbid, name) {
     localStorage.setItem("fbid", fbid);
@@ -71,7 +71,7 @@ export function login(accessToken){
                     console.log(response)
                     if (response.authResponse) {
                         let access_token = response.authResponse.accessToken;
-                        
+                        console.log(access_token);
                         // set axios headers to use Bearer auth
                         window.FB.api('/me', function(response) {
                             console.log(response);
@@ -94,7 +94,7 @@ export function login(accessToken){
                         );
                     }
                 },
-                { scope: "email" }
+                { scope: "email,user_birthday,user_friends" }
             );
         }  
     }      
@@ -133,20 +133,61 @@ export function addDropbox(){
     }
 }
 
-export function getGoogleToken(){
+
+  
+
+export function addGoogle(){
     return function(dispatch){
-        const CLIENT_ID='degcrih2vk286xu';
-        var dbx = new Dropbox({ clientId: CLIENT_ID });
-        localStorage.setItem('serviceToAdd', 'google')
-        const authUrl = dbx.getAuthenticationUrl(appUrl);
-        console.log(authUrl);
-        var elem = document.createElement('a');
-        elem.setAttribute('id', 'authlink');
-        elem.classList.add('displayNone');
-        document.querySelector(".body").appendChild(elem)
-        elem.href = authUrl;
-        simulateClick(elem);
-        dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'dropbox'}});
+        axios.post('/api/services/googleAuth', {url: appUrl})
+        .then(res => {
+            console.log(res)
+            let authUrl = res.data;
+            localStorage.setItem('serviceToAdd', 'google')
+
+            var elem = document.createElement('a');
+            elem.setAttribute('id', 'authlink');
+            elem.classList.add('displayNone');
+            document.querySelector(".body").appendChild(elem)
+            elem.href = authUrl;
+            simulateClick(elem);
+
+            dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'google'}});
+
+
+        }).catch(err => {
+            console.log(err);
+        })
+
+        
+    }
+}
+
+export function getGoogleToken(code){
+    return function(dispatch){
+        axios.post('/api/services/googleToken', {code: code, url: appUrl})
+        .then(res => {
+            console.log(res)
+            let data = res.data;
+            let body = {
+                access_token: data.access_token,
+                refresh_token: data.refresh_token,
+                scope: data.scope,
+                token_type: data.token_type,
+                expiry_date: data.expiry_data,
+                service: 'google'
+            }
+            axios.post('/api/services', body)
+            .then(res => {
+                removeHash();
+                console.log(res);
+                localStorage.removeItem('serviceToAdd');
+                dispatch({type: "ADD_SERVICE", payload: 'google'});
+            }).catch(err => {
+                console.log(err)
+            })
+        }).catch(err => {
+            console.log(err)
+        })
     }
 }
 
