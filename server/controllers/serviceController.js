@@ -34,7 +34,7 @@ module.exports = {
     var body = req.body;
     const service = body.service;
     delete body.service;
-
+    console.log('adding:', service)
     var user = req.user;
     user[service] = body;
 
@@ -48,6 +48,10 @@ module.exports = {
       })
       .then(user => res.status(200).send(user))
       .catch(err => next(err));
+  },
+
+  getMe: function(req, res, next) {
+    return res.status(200).send(req.user);
   },
 
   googleAuth: function(req, res, next) {
@@ -74,11 +78,12 @@ module.exports = {
       scope: SCOPES
     });
     console.log("google url", authUrl)
-    
+
     res.send(authUrl);
     },
     googleToken: function(req, res, next) {
         let code = req.body.code;
+        const appUrl = req.body.url;
         console.log('code:', code)
         const oAuth2Client = new google.auth.OAuth2(
             "219082002868-jn4q1i7cfqlf77qe8ldf46tkfg23hooh.apps.googleusercontent.com",
@@ -87,7 +92,7 @@ module.exports = {
           );
 
           //code=code from url
-        oAuth2Client.getToken(code, (err, token) => { 
+        oAuth2Client.getToken(code, (err, token) => {
             if(err)
                 console.log(err)
             res.send(token);
