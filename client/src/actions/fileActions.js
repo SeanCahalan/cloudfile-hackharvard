@@ -20,12 +20,14 @@ export function dropboxFetch(){
     }
 }
 
-export function googleFetch(id){
+export function googleFetch(id, token){
     return function(dispatch){
-        axios.post('/api/google/fetch', {parentId: id})
+        axios.post('/api/google/fetch', {parentId: id},{headers: {Authorization: "Bearer " + token}})
         .then(res => {
             console.log(res);
             dispatch({type: 'FETCH_GOOGLE', payload: res.data})
+        }).catch(err => {
+            console.log(err)
         })
     }
 }

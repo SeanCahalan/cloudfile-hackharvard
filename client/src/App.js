@@ -74,7 +74,8 @@ class App extends Component {
     componentDidUpdate(prevProps){
         if(!prevProps.user.info && this.props.user.info){
             this.props.dropboxFetch();
-            this.props.googleFetch('root');
+            if(this.props.user.info.google)
+                this.props.googleFetch('root', this.props.user.info.google.access_token);
         }
 
 
