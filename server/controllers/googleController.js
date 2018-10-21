@@ -85,12 +85,14 @@ module.exports = {
   },
 
   createFolder: function(req, res, next) {
-    const folderName = req.body.folderName;
+    const folderName = req.body.name;
+    const parentId = req.body.parentId;
     var fileMetadata = {
       name: folderName,
+      parents: "['" + parentId + "']",
       mimeType: "application/vnd.google-apps.folder"
     };
-    return drive.files
+    return google.files
       .create({
         resource: fileMetadata,
         fields: "id"
