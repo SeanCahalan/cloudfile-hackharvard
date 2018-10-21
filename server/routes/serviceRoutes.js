@@ -7,4 +7,5 @@ serviceRouter.use(serviceController.middleware);
 serviceRouter.post('/', serviceController.addService);
 serviceRouter.post('/googleAuth', serviceController.googleAuth);
 serviceRouter.post('/googleToken', serviceController.googleToken);
+serviceRouter.get('/me', serviceController.getMe);
 module.exports = serviceRouter;
