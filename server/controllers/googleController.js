@@ -1,6 +1,6 @@
 "use strict";
 const fs = require('fs');
-const streamBuffers = require('stream-buffers');
+const stream = require('stream');
 let google;
 
 let compareFiles = function(file1, file2) {
@@ -139,23 +139,21 @@ module.exports = {
       'parentId': "['" + req.files.parentId + "']"
     }
 
-    let fileStream = new streamBuffers.ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048
-    });
+    let bufferStream = new stream.PassThrough();
+    bufferStream.end(file.buffer);
 
     const media = {
-//      body: fs.createReadStream(file.buffer)
-      body: fileStream.put(file.buffer)
+      //body: fileStream.put(file.buffer)
+      body: bufferStream
     }
 
     return google.files.create({
       resource: fileMetadata,
       media: media,
-      fields: 'id'
+      fields: 'id, size'
     })
       .then(result => {
-        res.status(201).send(result.data.id)
+        res.status(201).send(result.data.size)
       })
       .catch(err => next(err));
   },
