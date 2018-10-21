@@ -55,8 +55,8 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
-    const directoryID = req.body.directoryID;
-    const query = "'" + directoryID + "'" + " in parents";
+    const parentId = req.body.parentId;
+    const query = "'" + parentId + "'" + " in parents";
     return google.files
       .list({
         q: query,
