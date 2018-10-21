@@ -21,7 +21,6 @@ function exchangeFacebookToken(user) {
 
       user.facebook.accessToken = longLivedToken;
       user.facebook.expiresOn = today.addDays(expiry / 86400);
-      console.log('token exchanged')
       return user.save();
     });
 }
