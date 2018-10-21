@@ -39,6 +39,24 @@ class Main extends Component{
             )
         })
 
+        this.props.unsorted.forEach(item => {
+            let div = (
+                <div key={item.name} className={"file col " + item.service}>
+                    <div className={"preview " + item.service}>
+                        <i className={`fas fa-file-${fileIcon[item.name.split('.')[1]]}`} />
+                    </div>
+                    <div className="info">
+                        <div>{item.name}</div>
+                    </div>
+                </div>
+            )
+            if(item.shared){
+                shared.push( div )
+            } else {
+                owned.push( div )
+            }
+        })
+
         return(
             <div className={styles.Main}>
 
@@ -112,7 +130,8 @@ function mapStateToProps(state){
     return {
         info: state.user.info,
         owned: state.files.owned,
-        shared: state.files.shared
+        shared: state.files.shared,
+        unsorted: state.files.unsorted
     }
 }
 

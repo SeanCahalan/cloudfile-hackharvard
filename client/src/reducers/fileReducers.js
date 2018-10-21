@@ -1,6 +1,7 @@
 export const initialState = {
     owned: [],
-    shared: []
+    shared: [],
+    unsorted: []
 };
 
 export function fileReducers(state = initialState, action) {
@@ -22,6 +23,11 @@ export function fileReducers(state = initialState, action) {
                     ...state.shared,
                     ...action.payload.shared
                 ]
+            }
+        case 'FETCH_GOOGLE':
+            return {
+                ...state,
+                unsorted: action.payload
             }
         case "LOGOUT_SUCCESS":
             return {
