@@ -1,4 +1,6 @@
 "use strict";
+const User = require('../models/user');
+const stream = require("stream");
 let google;
 
 let compareFiles = function(file1, file2) {
@@ -53,9 +55,8 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
-    console.log("FUCK GOOGLE");
-    const directoryID = req.body.directoryID;
-    const query = "'" + directoryID + "'" + " in parents";
+    const parentId = req.body.parentId;
+    const query = "'" + parentId + "'" + " in parents";
     return google.files
       .list({
         q: query,
@@ -101,68 +102,70 @@ module.exports = {
   },
 
   download: function(req, res, next) {
-    const fileId = "1z7IJjNgaMfV-ld1lI6C9pRU5SY_RmBUL";
-    const dest = fs.createWriteStream(`${os.homedir()}/Downloads/testt.docx`);
-
+    const fileId = req.body.fileId;
     return google.files
-      .export(
-        {
-          fileId,
-          mimeType:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        },
-        { responseType: "stream" }
-      )
-      .then(result => {
-        result.data
-          .on("end", () => {
-            console.log("Done downloading document.");
-          })
-          .on("error", err => {
-            console.error("Error downloading document.");
-          })
-          .pipe(dest);
+      .get({
+        fileId: fileId,
+        fields: "webContentLink"
       })
+      .then(result => res.status(200).send(result.data.webContentLink))
       .catch(err => next(err));
   },
 
   upload: function(req, res, next) {
-    // var fileMetadata = {
-    //   'name': 'photo.jpg'
-    // };
-    // var media = {
-    //   mimeType: 'image/jpeg',
-    //   body: fs.createReadStream('files/photo.jpg')
-    // };
-    // drive.files.create({
-    //   resource: fileMetadata,
-    //   media: media,
-    //   fields: 'id'
-    // }, function (err, file) {
-    //   if (err) {
-    //     // Handle error
-    //     console.error(err);
-    //   } else {
-    //     console.log('File Id: ', file.id);
-    //   }
-    // });
+    if (!req.files.file[0]) return next(new Error("No file provided"));
+    if (!req.body.parentId) return next(new Error("No parent ID provided"));
+
+    const file = req.files.file[0];
+    const fileMetadata = {
+      name: file.originalname,
+      parentId: "['" + req.files.parentId + "']"
+    };
+
+    let bufferStream = new stream.PassThrough();
+    bufferStream.end(file.buffer);
+
+    const media = {
+      //body: fileStream.put(file.buffer)
+      body: bufferStream
+    };
+
+    return google.files
+      .create({
+        resource: fileMetadata,
+        media: media,
+        fields: "id, size"
+      })
+      .then(result => {
+        res.status(201).send(result.data.size);
+      })
+      .catch(err => next(err));
   },
 
   shareFile: function(req, res, next) {
     var fileId = req.body.fileId;
-    var sharedEmail = req.body.sharedEmail;
-    var permissions = {
-      type: "user",
-      role: "writer",
-      emailAddress: sharedEmail
-    };
-    return drive.permissions
-      .create({
-        resource: permissions,
-        fileId: fileId,
-        fields: "id"
+    //var sharedEmail = req.body.sharedEmail;
+    const fbidToShare = req.body.fbid;
+
+    return User.findOne({ 'facebook.id': fbidToShare })
+      .then(user => {
+        let fbEmail = user.facebook.email;
+
+        let permissions = {
+          type: "user",
+          role: "writer",
+          emailAddress: fbEmail
+        };
+
+        return google.permissions.create({
+          resource: permissions,
+          fileId: fileId,
+          fields: "id"
+        });
       })
-      .then(result => res.status(200).send(result))
+      .then(result => {
+        res.status(200).send(result.data.id);
+      })
       .catch(err => next(err));
   },
 
