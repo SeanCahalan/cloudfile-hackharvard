@@ -8,7 +8,18 @@ class FileOptions extends Component {
     super(props);
     this.state = {};
   }
-
+  deleteFile = () => {
+    console.log(this.props.file.fileId);
+  };
+  shareFile = () => {
+    console.log(this.props.file.fileId);
+  };
+  sellFile = () => {
+    console.log(this.props.file.fileId);
+  };
+  downloadFile = () => {
+    console.log(this.props.file.fileId);
+  };
   render() {
     const fileDetails = () => {
       return (
