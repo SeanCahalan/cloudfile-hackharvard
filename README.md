@@ -2,4 +2,4 @@
 
 ayy
 
-npm install bitch
+npm install sir
