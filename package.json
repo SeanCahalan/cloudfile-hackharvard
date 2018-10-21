@@ -14,7 +14,7 @@
     "dev": "concurrently \"cd server && nodemon index.js\" \"cd client && npm start\"",
     "lt": "lt --port 4000 --subdomain cloudfile",
     "buildclient": "cd client && npm install && npm run-script build",
-    "heroku-postbuild": "npm run-script buildclient"
+    "heroku-postbuild": "npm run-script buildclient && cd server && npm install"
   },
   "author": "",
   "license": "ISC",
