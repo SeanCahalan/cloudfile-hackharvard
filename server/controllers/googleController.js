@@ -9,42 +9,39 @@ let beautifyFile = function(file) {
   return {
     id: file.id,
     name: file.name,
-    type: file.mimeType.split('.').pop(),
+    type: file.mimeType.split(".").pop(),
     size: file.size,
     lastModified: file.modifiedTime,
-    service: 'google'
-  }
-}
+    service: "google"
+  };
+};
 
 let populateDirectory = function(directoryID, files) {
   directory = {};
-  for (let i=0; i<files.length; i++) {
+  for (let i = 0; i < files.length; i++) {
     let file = files[i];
-    if (file.parents[0] == directoryID)
-      directory[file.id] = beautifyFile(file);
+    if (file.parents[0] == directoryID) directory[file.id] = beautifyFile(file);
   }
   return directory;
-}
+};
 
 let structureDriveList = function(driveList) {
   let fileSystem = {};
   let currentDirIds = new Set();
   // get the root dir
-  for (let i=0; i<driveList.length; i++) {
+  for (let i = 0; i < driveList.length; i++) {
     let file = driveList[i];
-    if (file.parents[0].length < 32)
-      fileSystem[file.id] = beautifyFile(file);
-      currentDirIds.add;
+    if (file.parents[0].length < 32) fileSystem[file.id] = beautifyFile(file);
+    currentDirIds.add;
   }
 
   // do all deeper layers
-  while(driveList.length > 0) {
-    for (let i=0; i<driveList.length; i++) {
+  while (driveList.length > 0) {
+    for (let i = 0; i < driveList.length; i++) {
       let file = driveList[i];
     }
   }
-  
-}
+};
 
 module.exports = {
   middleware: function(req, res, next) {
@@ -61,7 +58,8 @@ module.exports = {
     return google.files
       .list({
         q: query,
-        fields: "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
+        fields:
+          "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
       })
       .then(result => {
         let files = result.data.files;
@@ -139,60 +137,32 @@ module.exports = {
   },
 
   shareFile: function(req, res, next) {
-    // var fileId = req.body.fileId;
-    // var permissions = [
-    //   {
-    //     type: "user",
-    //     role: "writer",
-    //     emailAddress: "user@example.com"
-    //   },
-    //   {
-    //     type: "domain",
-    //     role: "writer",
-    //     domain: "example.com"
-    //   }
-    // ];
-    // // Using the NPM module 'async'
-    // async.eachSeries(
-    //   permissions,
-    //   function(permission, permissionCallback) {
-    //     drive.permissions.create(
-    //       {
-    //         resource: permission,
-    //         fileId: fileId,
-    //         fields: "id"
-    //       },
-    //       function(err, res) {
-    //         if (err) {
-    //           // Handle error...
-    //           console.error(err);
-    //           permissionCallback(err);
-    //         } else {
-    //           console.log("Permission ID: ", res.id);
-    //           permissionCallback();
-    //         }
-    //       }
-    //     );
-    //   },
-    //   function(err) {
-    //     if (err) {
-    //       // Handle error
-    //       console.error(err);
-    //     } else {
-    //       // All permissions inserted
-    //     }
-    //   }
-    // );
+    var fileId = req.body.fileId;
+    var sharedEmail = req.body.sharedEmail;
+    var permissions = {
+      type: "user",
+      role: "writer",
+      emailAddress: sharedEmail
+    };
+    return drive.permissions
+      .create({
+        resource: permissions,
+        fileId: fileId,
+        fields: "id"
+      })
+      .then(result => res.status(200).send(result))
+      .catch(err => next(err));
   },
 
   getSpace: function(req, res, next) {
-    return google.about.get({fields: "storageQuota"})
+    return google.about
+      .get({ fields: "storageQuota" })
       .then(result => {
         return res.status(200).send({
-          used: Math.round(result.data.storageQuota.usage/10000000)/100,
-          total: Math.round(result.data.storageQuota.limit/10000000)/100
+          used: Math.round(result.data.storageQuota.usage / 10000000) / 100,
+          total: Math.round(result.data.storageQuota.limit / 10000000) / 100
         });
       })
-      .catch(err => next(err))
+      .catch(err => next(err));
   }
 };
