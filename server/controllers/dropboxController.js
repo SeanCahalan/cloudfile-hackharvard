@@ -51,7 +51,7 @@ module.exports = {
         bibbity.push({
           'id': entry.id,
           'name': entry.name,
-          'size': entry.size,
+          'size': entry.size ? entry.size/1000000 : undefined,
           'last_modified': entry.server_modified,
           'service': 'dropbox',
           'shared': false,
@@ -64,7 +64,7 @@ module.exports = {
         bibbity.push({
           'id': entry.id,
           'name': entry.name,
-          'size': entry.size,
+          'size': entry.size ? entry.size/1000000 : undefined,
           'last_modified': entry.server_modified,
           'service': 'dropbox',
           'shared': true,
