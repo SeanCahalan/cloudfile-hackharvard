@@ -133,20 +133,32 @@ export function addDropbox(){
     }
 }
 
+
+  
+
 export function getGoogleToken(){
     return function(dispatch){
-        const CLIENT_ID='degcrih2vk286xu';
-        var dbx = new Dropbox({ clientId: CLIENT_ID });
-        localStorage.setItem('serviceToAdd', 'google')
-        const authUrl = dbx.getAuthenticationUrl(appUrl);
-        console.log(authUrl);
+        axios.post('/api/services/googleAuth', {url: appUrl})
+        .then(res => {
+            console.log(res)
+            let authUrl = res.data;
+            localStorage.setItem('serviceToAdd', 'google')
+
         var elem = document.createElement('a');
         elem.setAttribute('id', 'authlink');
         elem.classList.add('displayNone');
         document.querySelector(".body").appendChild(elem)
         elem.href = authUrl;
         simulateClick(elem);
-        dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'dropbox'}});
+
+        dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'google'}});
+
+
+        }).catch(err => {
+            console.log(err);
+        })
+
+        
     }
 }
 
