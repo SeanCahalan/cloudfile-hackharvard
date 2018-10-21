@@ -50,6 +50,10 @@ module.exports = {
       .catch(err => next(err));
   },
 
+  getMe: function(req, res, next) {
+    return res.status(200).send(req.user);
+  },
+
   googleAuth: function(req, res, next) {
     console.log('what the fuck')
     const appUrl = req.body.url;
@@ -74,7 +78,7 @@ module.exports = {
       scope: SCOPES
     });
     console.log("google url", authUrl)
-    
+
     res.send(authUrl);
     },
     googleToken: function(req, res, next) {
@@ -88,7 +92,7 @@ module.exports = {
           );
 
           //code=code from url
-        oAuth2Client.getToken(code, (err, token) => { 
+        oAuth2Client.getToken(code, (err, token) => {
             if(err)
                 console.log(err)
             res.send(token);

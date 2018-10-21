@@ -53,25 +53,23 @@ module.exports = {
           'size': entry.size,
           'last_modified': entry.server_modified,
           'service': 'dropbox',
+          'shared': false
         });
       }
 
-      let bibbityShared = [];
       const shared = sharedFiles.entries.concat(sharedFolders.entries)
       for (let i=0; i < shared.length; i++) {
         let entry = shared[i];
-        bibbityShared.push({
+        bibbity.push({
           'id': entry.id,
           'name': entry.name,
           'size': entry.size,
           'last_modified': entry.server_modified,
           'service': 'dropbox',
+          'shared': true
         });
       }
-      return res.status(200).send({
-        owned: bibbity,
-        shared: bibbityShared
-      });
+      return res.status(200).send(bibbity);
     })
     .catch(err => next(err));
   },
