@@ -1,6 +1,6 @@
 "use strict";
-const fs = require('fs');
-const stream = require('stream');
+const fs = require("fs");
+const stream = require("stream");
 let google;
 
 let compareFiles = function(file1, file2) {
@@ -102,42 +102,25 @@ module.exports = {
   },
 
   download: function(req, res, next) {
-    const fileId = "1z7IJjNgaMfV-ld1lI6C9pRU5SY_RmBUL";
-    const dest = fs.createWriteStream(`${os.homedir()}/Downloads/testt.docx`);
-
+    const fileId = req.body.fileId;
     return google.files
-      .export(
-        {
-          fileId,
-          mimeType:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        },
-        { responseType: "stream" }
-      )
-      .then(result => {
-        result.data
-          .on("end", () => {
-            console.log("Done downloading document.");
-          })
-          .on("error", err => {
-            console.error("Error downloading document.");
-          })
-          .pipe(dest);
+      .get({
+        fileId: fileId,
+        fields: "webContentLink"
       })
+      .then(result => res.status(200).send(result.data.webContentLink))
       .catch(err => next(err));
   },
 
   upload: function(req, res, next) {
-    if (!req.files.file[0])
-      return next(new Error('No file provided'));
-    if (!req.body.parentId)
-      return next(new Error('No parent ID provided'));
+    if (!req.files.file[0]) return next(new Error("No file provided"));
+    if (!req.body.parentId) return next(new Error("No parent ID provided"));
 
     const file = req.files.file[0];
     const fileMetadata = {
-      'name': file.originalname,
-      'parentId': "['" + req.files.parentId + "']"
-    }
+      name: file.originalname,
+      parentId: "['" + req.files.parentId + "']"
+    };
 
     let bufferStream = new stream.PassThrough();
     bufferStream.end(file.buffer);
@@ -145,15 +128,16 @@ module.exports = {
     const media = {
       //body: fileStream.put(file.buffer)
       body: bufferStream
-    }
+    };
 
-    return google.files.create({
-      resource: fileMetadata,
-      media: media,
-      fields: 'id, size'
-    })
+    return google.files
+      .create({
+        resource: fileMetadata,
+        media: media,
+        fields: "id, size"
+      })
       .then(result => {
-        res.status(201).send(result.data.size)
+        res.status(201).send(result.data.size);
       })
       .catch(err => next(err));
   },
