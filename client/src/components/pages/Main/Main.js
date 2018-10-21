@@ -13,33 +13,15 @@ import AddPayoutMethod from '../../stripe/AddPayoutMethod/AddPayoutMethod';
 class Main extends Component{
     render(){
 
-        let owned = this.props.owned.map(file => {
-            return(
-                <div key={file.name+file.lastModified} className={"file col " + file.service}>
-                    <div className={"preview " + file.service}>
-                        <i className={`fas fa-file-${fileIcon[file.name.split('.')[1]]}`} />
-                    </div>
-                    <div className="info">
-                        <div>{file.name}</div>
-                    </div>
-                </div>
-            )
-        })
+        let foldersOwned = [];
+        let filesOwned = [];
 
-        let shared = this.props.shared.map(file => {
-            return(
-                <div key={file.name+file.lastModified} className={"file col " + file.service}>
-                    <div className={"preview " + file.service}>
-                        <i className={`fas fa-file-${fileIcon[file.name.split('.')[1]]}`} />
-                    </div>
-                    <div className="info">
-                        <div>{file.name}</div>
-                    </div>
-                </div>
-            )
-        })
+        let foldersShared = [];
+        let filesShared = [];
 
-        this.props.unsorted.forEach(item => {
+
+        this.props.files.forEach(item => {
+            
             let div = (
                 <div key={item.name+item.lastModified} className={"file col " + item.service}>
                     <div className={"preview " + item.service}>
@@ -50,11 +32,20 @@ class Main extends Component{
                     </div>
                 </div>
             )
-            if(item.shared){
-                shared.push( div )
+            if(item.isFolder){
+                if(item.shared){
+                    foldersShared.push( div )
+                } else {
+                    foldersOwned.push( div )
+                }
             } else {
-                owned.push( div )
+                if(item.shared){
+                    filesShared.push( div )
+                } else {
+                    filesOwned.push( div )
+                }
             }
+            
         })
 
         return(
@@ -111,13 +102,25 @@ class Main extends Component{
 
                 <div className="body col">
                         <div className="scroll-wrapper col">
+
+                            <div className="header">My folders</div>
+                            <div className="file-wrapper">
+                                {foldersOwned}
+                            </div>
+
+                            <div className="header">Folders shared with me</div>
+                            <div className="file-wrapper">
+                               {foldersShared}
+                            </div>
+
                             <div className="header">My files</div>
                             <div className="file-wrapper">
-                                {owned}
+                                {filesOwned}
                             </div>
-                            <div className="header">Shared with me</div>
+
+                            <div className="header">Files shared with me</div>
                             <div className="file-wrapper">
-                                {shared}
+                               {filesShared}
                             </div>
                         </div>
                 </div>
@@ -130,9 +133,7 @@ class Main extends Component{
 function mapStateToProps(state){
     return {
         info: state.user.info,
-        owned: state.files.owned,
-        shared: state.files.shared,
-        unsorted: state.files.unsorted
+        files: state.files.files
     }
 }
 

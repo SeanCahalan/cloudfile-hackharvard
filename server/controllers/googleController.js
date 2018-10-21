@@ -56,6 +56,7 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
+      console.log(req.body.parentId)
     const parentId = req.body.parentId;
     const query = "'" + parentId + "'" + " in parents";
     return google.files
@@ -73,7 +74,10 @@ module.exports = {
         }
         res.status(200).send(bibbity);
       })
-      .catch(err => next(err));
+      .catch(err => {
+          console.log(err.message)
+          next(err)
+        });
   },
 
   delete: function(req, res, next) {

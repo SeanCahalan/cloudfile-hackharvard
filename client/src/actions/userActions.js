@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { Dropbox } from 'dropbox';
 
-const appUrl = process.env.NODE_ENV import { get } from 'http';
-=== 'development' ?
+const appUrl = process.env.NODE_ENV === 'development' ?
 'http://localhost:3000' : process.env.APP_URL;
 
 function setLoginData(fbid, name) {
@@ -26,7 +25,7 @@ export function fbUpdateStatus(status) {
 
 export function getMe(){
     return function(dispatch) {
-        axios.get('/services/me')
+        axios.get('/api/services/me')
         .then(res => {
             dispatch({ type: "GOT_ME", payload: res.data });
         })

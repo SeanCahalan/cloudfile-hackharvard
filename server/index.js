@@ -51,13 +51,13 @@ app.use(bodyParser.json());
 //     res.render("index")
 // });
 
-app.use(express.static(path.join(__dirname, '..', "client/build")));
+app.use(express.static(path.join(__dirname, '../',"client/build")));
 
 if (process.env.NODE_ENV === "production") {
     // app.get("*", (req, res) => res.render("index.ejs"));
     console.log('yo');
     app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname+'/client/build/index.html'));
+        res.sendFile(path.join(__dirname, '../','/client/build/index.html'));
       });
 }
 

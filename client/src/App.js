@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 
-import { fbUpdateStatus, login, addService, getGoogleToken } from './actions/userActions';
+import { fbUpdateStatus, login, addService, getGoogleToken, getMe } from './actions/userActions';
 import { dropboxDownload, dropboxFetch, googleFetch } from './actions/fileActions';
 
 import Login from './components/auth/Login/Login';
@@ -13,15 +13,11 @@ class App extends Component {
     componentDidMount() {
         console.log(process.env)
         const fbid = localStorage.getItem('fbid')
-        if(fbid)
+        if(fbid){
+            console.log(fbid)
             axios.defaults.headers.common["Authorization"] = "Bearer " + fbid;
-
-        // get additional login data
-        const fbAccessToken = localStorage.getItem('fbAccessToken')
-        console.log(fbid, fbAccessToken)
-        if(fbAccessToken)
-            this.props.login(fbAccessToken)
-
+            this.props.getMe()
+        }
         //parse redirect uri.
         const location = this.props.location;
         console.log(location)
@@ -125,7 +121,8 @@ const actions = {
     addService,
     dropboxFetch,
     googleFetch,
-    getGoogleToken
+    getGoogleToken,
+    getMe
 }
 
 export default withRouter(connect(mapStateToProps, actions)(App));
