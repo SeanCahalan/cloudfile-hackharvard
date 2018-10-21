@@ -80,7 +80,7 @@ module.exports = {
       if (err) return next(err);
       if (!user) return next(new Error(info[0].error));
 
-      return (user.isNew ? addStripe(user, ip) : Promise.resolve(user))
+      return (user.credentials.customerId ? Promise.resolve(user) : addStripe(user, ip))
         .then(user => res.status(201).send(user))
         .catch(err => next(err));
     }

@@ -44,7 +44,6 @@ const fbLogin = new FacebookTokenStrategy(fbCredentials, function(
     .then(existingUser => {
       if (existingUser) {
         existingUser.facebook.accessToken = accessToken;
-        existingUser.isNew = false;
         return existingUser.save();
       }
       let user = new User({
@@ -56,7 +55,6 @@ const fbLogin = new FacebookTokenStrategy(fbCredentials, function(
         }
       });
 
-      user.isNew = true;
       return user.save();
     })
     .then(user => exchangeFacebookToken(user))
