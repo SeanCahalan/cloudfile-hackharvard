@@ -5,6 +5,7 @@ const authRouter = require('./routes/authRoutes');
 const dropboxRouter = require('./routes/dropboxRoutes');
 const googleRouter = require('./routes/googleRoutes');
 const serviceRouter = require('./routes/serviceRoutes');
+const stripeRouter = require('./routes/stripeRoutes');
 const errorMiddleware = require("./errors/middleware");
 
 module.exports = function(app) {
@@ -13,6 +14,7 @@ module.exports = function(app) {
   apiRouter.use('/dropbox', dropboxRouter);
   apiRouter.use('/google', googleRouter);
   apiRouter.use('/services', serviceRouter);
+  apiRouter.use('/stripe', stripeRouter);
 
   // attach routers and middleware to app
   app.use("/auth", authRouter);

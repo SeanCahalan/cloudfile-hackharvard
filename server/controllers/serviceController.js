@@ -1,4 +1,6 @@
 'use strict';
+const {google} = require("googleapis");
+const facebook = require('../config/facebook');
 let dropbox;
 
 function getDropboxId(user) {
@@ -32,7 +34,7 @@ module.exports = {
     var body = req.body;
     const service = body.service;
     delete body.service;
-
+    console.log('adding:', service)
     var user = req.user;
     user[service] = body;
 
@@ -47,4 +49,61 @@ module.exports = {
       .then(user => res.status(200).send(user))
       .catch(err => next(err));
   },
+
+  getMe: function(req, res, next) {
+    return res.status(200).send(req.user);
+  },
+
+  googleAuth: function(req, res, next) {
+    console.log('what the fuck')
+    const appUrl = req.body.url;
+    console.log('appurl:',appUrl)
+      const SCOPES = [
+          "https://www.googleapis.com/auth/drive",
+          "https://www.googleapis.com/auth/drive.appdata",
+          "https://www.googleapis.com/auth/drive.file",
+          "https://www.googleapis.com/auth/drive.metadata",
+          "https://www.googleapis.com/auth/drive.metadata.readonly",
+          "https://www.googleapis.com/auth/drive.photos.readonly",
+          "https://www.googleapis.com/auth/drive.readonly"
+      ];
+
+    const oAuth2Client = new google.auth.OAuth2(
+      "219082002868-jn4q1i7cfqlf77qe8ldf46tkfg23hooh.apps.googleusercontent.com",
+      "EmTMVLtGPd-LDh1mhIXoE8dw",
+      appUrl
+    );
+    const authUrl = oAuth2Client.generateAuthUrl({
+      access_type: "offline",
+      scope: SCOPES
+    });
+    console.log("google url", authUrl)
+
+    res.send(authUrl);
+    },
+    googleToken: function(req, res, next) {
+        let code = req.body.code;
+        const appUrl = req.body.url;
+        console.log('code:', code)
+        const oAuth2Client = new google.auth.OAuth2(
+            "219082002868-jn4q1i7cfqlf77qe8ldf46tkfg23hooh.apps.googleusercontent.com",
+            "EmTMVLtGPd-LDh1mhIXoE8dw",
+            appUrl
+          );
+
+          //code=code from url
+        oAuth2Client.getToken(code, (err, token) => {
+            if(err)
+                console.log(err)
+            res.send(token);
+        });
+    },
+
+    getFbFriends: function(req, res, next) {
+      const accessToken = req.user.facebook.accessToken
+      return facebook.api('me/friends', { access_token: accessToken })
+        .then(results => res.status(200).send(results.data))
+        .catch(err => next(err));
+
+    }
 };

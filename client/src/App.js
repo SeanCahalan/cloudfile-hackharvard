@@ -3,8 +3,8 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 
-import { fbUpdateStatus, login, addService } from './actions/userActions';
-import { dropboxDownload, dropboxFetch } from './actions/fileActions';
+import { fbUpdateStatus, login, addService, getGoogleToken, getMe } from './actions/userActions';
+import { dropboxDownload, dropboxFetch, googleFetch } from './actions/fileActions';
 
 import Login from './components/auth/Login/Login';
 import Main from './components/pages/Main/Main';
@@ -13,17 +13,14 @@ class App extends Component {
     componentDidMount() {
         console.log(process.env)
         const fbid = localStorage.getItem('fbid')
-        if(fbid)
+        if(fbid){
+            console.log(fbid)
             axios.defaults.headers.common["Authorization"] = "Bearer " + fbid;
-
-        // get additional login data
-        const fbAccessToken = localStorage.getItem('fbAccessToken')
-        console.log(fbid, fbAccessToken)
-        if(fbAccessToken)
-            this.props.login(fbAccessToken)
-
+            this.props.getMe()
+        }
         //parse redirect uri.
         const location = this.props.location;
+        console.log(location)
         if(location.hash && fbid){
             let hashMap = {}
             location.hash.replace('#','').split('&').forEach(item => {
@@ -35,6 +32,16 @@ class App extends Component {
             console.log("ADD SERVICE:", service, access_token)
 
             this.props.addService({token: access_token}, service);
+        } else if(location.search){
+            console.log('query:', location.search);
+            let hashMap = {}
+            location.search.replace('?','').split('&').forEach(item => {
+                let key_value = item.split('=');
+                hashMap[key_value[0]] = key_value[1];
+            });
+            let code = hashMap.code;
+            this.props.getGoogleToken(code);
+
         }
 
         window.fbAsyncInit = () => {
@@ -62,7 +69,12 @@ class App extends Component {
 
     componentDidUpdate(prevProps){
         if(!prevProps.user.info && this.props.user.info){
+            console.log(this.props.user.info)
             this.props.dropboxFetch();
+            if(this.props.user.info.google){
+                console.log('get the google')
+                this.props.googleFetch('root');
+            }
         }
 
 
@@ -107,7 +119,10 @@ const actions = {
     dropboxDownload,
     login,
     addService,
-    dropboxFetch
+    dropboxFetch,
+    googleFetch,
+    getGoogleToken,
+    getMe
 }
 
 export default withRouter(connect(mapStateToProps, actions)(App));

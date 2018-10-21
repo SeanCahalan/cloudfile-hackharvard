@@ -1,6 +1,12 @@
+var _ = require('lodash');
+
 export const initialState = {
-    owned: [],
-    shared: []
+    files: [],
+    directoryFiles: [],
+    directory: {
+        current: "Filetron",
+        "Filetron": {name: "Filetron"}
+    }
 };
 
 export function fileReducers(state = initialState, action) {
@@ -14,19 +20,41 @@ export function fileReducers(state = initialState, action) {
         case 'FETCH_DROPBOX':
             return {
                 ...state,
-                owned: [
-                    ...state.owned, 
-                    ...action.payload.owned
+                files: [
+                    ...state.files, 
+                    ...action.payload
                 ],
-                shared: [
-                    ...state.shared,
-                    ...action.payload.shared
+                directoryFiles: [
+                    ...state.files, 
+                    ...action.payload
                 ]
+            }
+        case 'FETCH_GOOGLE':
+            return {
+                ...state,
+                files: [
+                    ...state.files, 
+                    ...action.payload
+                ],
+                directoryFiles: [
+                    ...state.files, 
+                    ...action.payload
+                ]
+            }
+        case 'CHANGE_GOOGLE_DIRECTORY':
+            let updatedDirectory = _.clone(state.directory, true)
+            updatedDirectory.current = action.payload.id;
+            updatedDirectory[action.payload.id] = {parent: action.payload.parentId || 'Filetron', name: action.payload.name};
+            console.log(updatedDirectory)
+            return {
+                ...state,
+                directoryFiles: action.payload.data,
+                directory: updatedDirectory
             }
         case "LOGOUT_SUCCESS":
             return {
                 ...state,
-                files: {}
+                files: []
             };
         default:
             return state;

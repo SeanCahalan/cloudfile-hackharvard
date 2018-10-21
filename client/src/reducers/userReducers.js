@@ -32,7 +32,7 @@ export function userReducers(state = initialState, action) {
                 ...state,
 
             }
-        case "GET_USER_INFO":
+        case "GOT_ME":
             return {
                 ...state,
                 info: action.payload

@@ -13,13 +13,23 @@ function setLoginData(fbid, name) {
 function removeLoginData() {
     localStorage.removeItem("fbid");
     localStorage.removeItem("name");
-    localStorage.removeItem("fbAccessToken")
+    // localStorage.removeItem("fbAccessToken")
     delete axios.defaults.headers.common["Authorization"];
 }
 
 export function fbUpdateStatus(status) {
     return function(dispatch) {
         dispatch({ type: "FB_LOADED", payload: status });
+    };
+}
+
+export function getMe(){
+    return function(dispatch) {
+        axios.get('/api/services/me')
+        .then(res => {
+            dispatch({ type: "GOT_ME", payload: res.data });
+        })
+        
     };
 }
 
@@ -56,16 +66,16 @@ export function logout(){
 export function login(accessToken){
     return function(dispatch){
 
-        if(accessToken){
-            axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + accessToken}})
-                .then(res => {
-                    console.log(res.data);
-                    
-                    dispatch({type: "LOGIN_SUCCESS", payload: res.data })
-                }).catch(err => {
-                    console.log(err.data)
-                })
-        } else {
+        // if(accessToken){
+        //     axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + accessToken}})
+        //         .then(res => {
+        //             console.log(res.data);
+        //             //localStorage.setItem('fbAccessToken', res.data.facebook.accessToken)
+        //             dispatch({type: "LOGIN_SUCCESS", payload: res.data })
+        //         }).catch(err => {
+        //             console.log(err.data)
+        //         })
+        // } else {
             window.FB.login(
                 response => {
                     console.log(response)
@@ -81,7 +91,7 @@ export function login(accessToken){
                             setLoginData(fbid, name);
                             axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + access_token}})
                             .then(res => {
-                                localStorage.setItem('fbAccessToken', res.data.facebook.accessToken)
+                                //localStorage.setItem('fbAccessToken', res.data.facebook.accessToken)
                                 dispatch({type: "LOGIN_SUCCESS", payload: res.data})
                             }).catch(err => {
                                 console.log(err.data)
@@ -97,7 +107,7 @@ export function login(accessToken){
                 { scope: "email,user_birthday,user_friends" }
             );
         }  
-    }      
+    // }      
 }
 
 /**
@@ -105,7 +115,7 @@ export function login(accessToken){
  * @public
  * @param {Element} elem  the element to simulate a click on
  */
-var simulateClick = function (elem) {
+export var simulateClick = function (elem) {
 	// Create our event (with options)
 	var evt = new MouseEvent('click', {
 		bubbles: true,
@@ -133,20 +143,61 @@ export function addDropbox(){
     }
 }
 
-export function getGoogleToken(){
+
+  
+
+export function addGoogle(){
     return function(dispatch){
-        const CLIENT_ID='degcrih2vk286xu';
-        var dbx = new Dropbox({ clientId: CLIENT_ID });
-        localStorage.setItem('serviceToAdd', 'google')
-        const authUrl = dbx.getAuthenticationUrl(appUrl);
-        console.log(authUrl);
-        var elem = document.createElement('a');
-        elem.setAttribute('id', 'authlink');
-        elem.classList.add('displayNone');
-        document.querySelector(".body").appendChild(elem)
-        elem.href = authUrl;
-        simulateClick(elem);
-        dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'dropbox'}});
+        axios.post('/api/services/googleAuth', {url: appUrl})
+        .then(res => {
+            console.log(res)
+            let authUrl = res.data;
+            localStorage.setItem('serviceToAdd', 'google')
+
+            var elem = document.createElement('a');
+            elem.setAttribute('id', 'authlink');
+            elem.classList.add('displayNone');
+            document.querySelector(".body").appendChild(elem)
+            elem.href = authUrl;
+            simulateClick(elem);
+
+            dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'google'}});
+
+
+        }).catch(err => {
+            console.log(err);
+        })
+
+        
+    }
+}
+
+export function getGoogleToken(code){
+    return function(dispatch){
+        axios.post('/api/services/googleToken', {code: code, url: appUrl})
+        .then(res => {
+            console.log(res)
+            let data = res.data;
+            let body = {
+                access_token: data.access_token,
+                refresh_token: data.refresh_token,
+                scope: data.scope,
+                token_type: data.token_type,
+                expiry_date: data.expiry_data,
+                service: 'google'
+            }
+            axios.post('/api/services', body)
+            .then(res => {
+                removeHash();
+                console.log(res);
+                localStorage.removeItem('serviceToAdd');
+                dispatch({type: "ADD_SERVICE", payload: 'google'});
+            }).catch(err => {
+                console.log(err)
+            })
+        }).catch(err => {
+            console.log(err)
+        })
     }
 }
 
@@ -155,11 +206,30 @@ function removeHash () {
     if ("pushState" in window.history)
         window.history.pushState("", document.title, loc.pathname + loc.search);
     else {
+        console.log('RESET LINK')
         // Prevent scrolling by storing the page's current scroll offset
         scrollV = document.body.scrollTop;
         scrollH = document.body.scrollLeft;
 
+        loc.search = ""
         loc.hash = "";
+
+        // Restore the scroll offset, should be flicker free
+        document.body.scrollTop = scrollV;
+        document.body.scrollLeft = scrollH;
+    }
+}
+
+function removeSearch () { 
+    var scrollV, scrollH, loc = window.location;
+    if ("pushState" in window.history)
+        window.history.pushState("", document.title, loc.pathname + loc.search);
+    else {
+        // Prevent scrolling by storing the page's current scroll offset
+        scrollV = document.body.scrollTop;
+        scrollH = document.body.scrollLeft;
+
+        loc.search = "";
 
         // Restore the scroll offset, should be flicker free
         document.body.scrollTop = scrollV;

@@ -1,4 +1,6 @@
 "use strict";
+const User = require('../models/user');
+const stream = require("stream");
 let google;
 
 let compareFiles = function(file1, file2) {
@@ -9,42 +11,40 @@ let beautifyFile = function(file) {
   return {
     id: file.id,
     name: file.name,
-    type: file.mimeType.split('.').pop(),
+    type: file.mimeType.split(".").pop(),
     size: file.size,
+    shared: !file.ownedByMe,
     lastModified: file.modifiedTime,
-    service: 'google'
-  }
-}
+    service: "google"
+  };
+};
 
 let populateDirectory = function(directoryID, files) {
   directory = {};
-  for (let i=0; i<files.length; i++) {
+  for (let i = 0; i < files.length; i++) {
     let file = files[i];
-    if (file.parents[0] == directoryID)
-      directory[file.id] = beautifyFile(file);
+    if (file.parents[0] == directoryID) directory[file.id] = beautifyFile(file);
   }
   return directory;
-}
+};
 
 let structureDriveList = function(driveList) {
   let fileSystem = {};
   let currentDirIds = new Set();
   // get the root dir
-  for (let i=0; i<driveList.length; i++) {
+  for (let i = 0; i < driveList.length; i++) {
     let file = driveList[i];
-    if (file.parents[0].length < 32)
-      fileSystem[file.id] = beautifyFile(file);
-      currentDirIds.add;
+    if (file.parents[0].length < 32) fileSystem[file.id] = beautifyFile(file);
+    currentDirIds.add;
   }
 
   // do all deeper layers
-  while(driveList.length > 0) {
-    for (let i=0; i<driveList.length; i++) {
+  while (driveList.length > 0) {
+    for (let i = 0; i < driveList.length; i++) {
       let file = driveList[i];
     }
   }
-  
-}
+};
 
 module.exports = {
   middleware: function(req, res, next) {
@@ -56,12 +56,14 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
-    const directoryID = req.body.directoryID;
-    const query = "'" + directoryID + "'" + " in parents";
+      console.log(req.body.parentId)
+    const parentId = req.body.parentId;
+    const query = "'" + parentId + "'" + " in parents";
     return google.files
       .list({
         q: query,
-        fields: "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
+        fields:
+          "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size, ownedByMe)"
       })
       .then(result => {
         let files = result.data.files;
@@ -72,11 +74,14 @@ module.exports = {
         }
         res.status(200).send(bibbity);
       })
-      .catch(err => next(err));
+      .catch(err => {
+          console.log(err.message)
+          next(err)
+        });
   },
 
   delete: function(req, res, next) {
-    const fileId = req.body.file;
+    const fileId = req.body.id;
 
     return google.files
       .delete({ fileId })
@@ -85,12 +90,14 @@ module.exports = {
   },
 
   createFolder: function(req, res, next) {
-    const folderName = req.body.folderName;
+    const folderName = req.body.name;
+    const parentId = req.body.parentId;
     var fileMetadata = {
       name: folderName,
+      parents: "['" + parentId + "']",
       mimeType: "application/vnd.google-apps.folder"
     };
-    return drive.files
+    return google.files
       .create({
         resource: fileMetadata,
         fields: "id"
@@ -100,99 +107,82 @@ module.exports = {
   },
 
   download: function(req, res, next) {
-    // var fileId = "0BwwA4oUTeiV1UVNwOHItT0xfa2M";
-    // var dest = fs.createWriteStream("/tmp/photo.jpg");
-    // drive.files
-    //   .get({
-    //     fileId: fileId,
-    //     alt: "media"
-    //   })
-    //   .on("end", function() {
-    //     console.log("Done");
-    //   })
-    //   .on("error", function(err) {
-    //     console.log("Error during download", err);
-    //   })
-    //   .pipe(dest);
+    const fileId = req.body.id;
+    return google.files
+      .get({
+        fileId: fileId,
+        fields: "webContentLink"
+      })
+      .then(result => res.status(200).send(result.data.webContentLink))
+      .catch(err => next(err));
   },
 
   upload: function(req, res, next) {
-    // var fileMetadata = {
-    //   'name': 'photo.jpg'
-    // };
-    // var media = {
-    //   mimeType: 'image/jpeg',
-    //   body: fs.createReadStream('files/photo.jpg')
-    // };
-    // drive.files.create({
-    //   resource: fileMetadata,
-    //   media: media,
-    //   fields: 'id'
-    // }, function (err, file) {
-    //   if (err) {
-    //     // Handle error
-    //     console.error(err);
-    //   } else {
-    //     console.log('File Id: ', file.id);
-    //   }
-    // });
+    if (!req.files.file[0]) return next(new Error("No file provided"));
+    if (!req.body.parentId) return next(new Error("No parent ID provided"));
+
+    const file = req.files.file[0];
+    const fileMetadata = {
+      name: file.originalname,
+      parentId: "['" + req.files.parentId + "']"
+    };
+
+    let bufferStream = new stream.PassThrough();
+    bufferStream.end(file.buffer);
+
+    const media = {
+      //body: fileStream.put(file.buffer)
+      body: bufferStream
+    };
+
+    return google.files
+      .create({
+        resource: fileMetadata,
+        media: media,
+        fields: "id, size"
+      })
+      .then(result => {
+        res.status(201).send(result.data.size);
+      })
+      .catch(err => next(err));
   },
 
   shareFile: function(req, res, next) {
-    // var fileId = req.body.fileId;
-    // var permissions = [
-    //   {
-    //     type: "user",
-    //     role: "writer",
-    //     emailAddress: "user@example.com"
-    //   },
-    //   {
-    //     type: "domain",
-    //     role: "writer",
-    //     domain: "example.com"
-    //   }
-    // ];
-    // // Using the NPM module 'async'
-    // async.eachSeries(
-    //   permissions,
-    //   function(permission, permissionCallback) {
-    //     drive.permissions.create(
-    //       {
-    //         resource: permission,
-    //         fileId: fileId,
-    //         fields: "id"
-    //       },
-    //       function(err, res) {
-    //         if (err) {
-    //           // Handle error...
-    //           console.error(err);
-    //           permissionCallback(err);
-    //         } else {
-    //           console.log("Permission ID: ", res.id);
-    //           permissionCallback();
-    //         }
-    //       }
-    //     );
-    //   },
-    //   function(err) {
-    //     if (err) {
-    //       // Handle error
-    //       console.error(err);
-    //     } else {
-    //       // All permissions inserted
-    //     }
-    //   }
-    // );
+    var fileId = req.body.id;
+    //var sharedEmail = req.body.sharedEmail;
+    const fbidToShare = req.body.fbid;
+
+    return User.findOne({ 'facebook.id': fbidToShare })
+      .then(user => {
+        let fbEmail = user.facebook.email;
+
+        let permissions = {
+          type: "user",
+          role: "writer",
+          emailAddress: fbEmail
+        };
+
+        return google.permissions.create({
+          resource: permissions,
+          fileId: id,
+          fields: "id"
+        });
+      })
+      .then(result => {
+        res.status(200).send(result.data.id);
+      })
+      .catch(err => next(err));
   },
 
   getSpace: function(req, res, next) {
-    return drive.about.get()
+    return google.about
+      .get({ fields: "storageQuota" })
       .then(result => {
         return res.status(200).send({
-          used: result.storageQuota.usage,
-          total: result.storageQuota.limit
+          used: Math.round(result.data.storageQuota.usage / 10000000) / 100,
+          total: Math.round(result.data.storageQuota.limit / 10000000) / 100
         });
       })
-      .catch(err => next(err))
+      .catch(err => next(err));
   }
 };
