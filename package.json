@@ -13,7 +13,7 @@
     "start": "npm startserver",
     "dev": "concurrently \"cd server && nodemon index.js\" \"cd client && npm start\"",
     "lt": "lt --port 4000 --subdomain cloudfile",
-    "buildclient": "cd client && yarn run build",
+    "buildclient": "cd client && npm run-script build",
     "heroku-postbuild": "npm buildclient"
   },
   "author": "",
