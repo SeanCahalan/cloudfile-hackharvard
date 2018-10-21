@@ -94,7 +94,46 @@
             .file-wrapper {
                 display: flex;
                 flex-wrap: wrap;
-                min-height: 20vh;
+
+                .folder{
+                    width: 20%;
+                    margin-left: 2vw;
+                    margin-bottom: 2vw;
+                    height: 6vw;
+                    box-shadow: 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
+                    display: flex;
+                    align-items: center;
+                    padding: 1vw;
+                    border-radius: 1vw;
+                    transition: all ease .3s;
+                    cursor: pointer;
+                    .info{
+                        width: 100%;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;       
+                        justify-content: space-between;
+
+                    }
+                    &.dropbox {
+                        .name{
+                            color: #0070e0;
+                        }
+                        &:hover{
+                            border: 2px solid #0070e0;
+                        }
+                    }
+
+                    &.google {
+                        .name{
+                            color: #0F9D58;
+                        }
+                        &:hover{
+                            border: 2px solid #0F9D58;
+                        }
+                    }
+                }
+
 
                 .file {
 
@@ -125,7 +164,12 @@
                         display: flex;
                         flex-direction: column;
                         justify-content: center;
-
+                        .name{
+                            white-space: nowrap; 
+                            width: 80%; 
+                            overflow: hidden;
+                            text-overflow: ellipsis; 
+                        }
                         .dots {
                             position: absolute;
                             width: 20px;

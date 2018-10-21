@@ -31,3 +31,15 @@ export function googleFetch(id){
         })
     }
 }
+
+export function changeDirectoryGoogle(id, name, parentId){
+    return function(dispatch){
+        axios.post('/api/google/fetch', {parentId: id})
+        .then(res => {
+            console.log(res);
+            dispatch({type: 'CHANGE_GOOGLE_DIRECTORY', payload: {data: res.data, id: id, name: name, parentId: parentId}})
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+}

@@ -3,6 +3,7 @@ import styles from "./Main.scss";
 import { connect } from "react-redux";
 import axios from "axios";
 import { addDropbox, logout } from "../../../actions/userActions";
+import { changeDirectoryGoogle,  } from '../../../actions/fileActions'
 import { fileIcon } from "../../../util/data";
 
 import AddService from "./AddService/AddService";
@@ -10,6 +11,7 @@ import FileOptions from "./FileOptions/FileOptions";
 import ModalContainer from "../../layout/ModalContainer/ModalContainer";
 import AddPaymentMethod from "../../stripe/AddPaymentMethod/AddPaymentMethod";
 import AddPayoutMethod from "../../stripe/AddPayoutMethod/AddPayoutMethod";
+import Directory from './Directory/Directory';
 
 class Main extends Component {
   constructor(props) {
@@ -20,46 +22,79 @@ class Main extends Component {
     };
   }
 
-  handleUploadImage = ev => {
-    ev.preventDefault();
+    changeDirectory = (item) => {
+        let service = item.service;
+        if(service === 'google'){
+            this.props.changeDirectoryGoogle(item.id, item.name, this.props.directory.current);
+        } else {
+            this.props.changeDirectoryDropbox(item.id, item.name, this.props.directory.current);
+        }
+    }
 
-    const data = new FormData();
-    data.append("file", this.uploadInput.files[0]);
-    axios.post("/api/dropbox/upload", data).then(response => {
-      console.log(response);
-    });
-  };
+    handleUploadImage = ev => {
+        ev.preventDefault();
+
+        const data = new FormData();
+        data.append("file", this.uploadInput.files[0]);
+        axios.post("/api/dropbox/upload", data).then(response => {
+            console.log(response);
+        });
+    };
 
   render() {
+
+    function getIcon(item){
+        return fileIcon[item.name.split(".")[1]] || 'alt';
+    }
+
     let foldersOwned = [];
     let filesOwned = [];
     let foldersShared = [];
     let filesShared = [];
     console.log(this.props.files);
-    this.props.files.forEach(item => {
-      let div = (
-        <div
-          key={item.name + item.lastModified}
-          className={"file col " + item.service}
-        >
-          <div className={"preview " + item.service}>
-            <i className={`fas fa-file-${fileIcon[item.name.split(".")[1]]}`} />
-          </div>
-          <div className="info">
-            <div>{item.name}</div>
-            <ModalContainer content={<FileOptions file={item} />}>
-              <i className="fas fa-ellipsis-v dots" />
-            </ModalContainer>
-          </div>
-        </div>
-      );
-      if (item.isFolder) {
-        if (item.shared) {
-          foldersShared.push(div);
+    this.props.directoryFiles.forEach(item => {
+      
+        if (item.isFolder || (item.type && item.type === 'folder') ) {
+            let div = (
+                <div
+                    key={item.name + item.lastModified}
+                    className={"folder " + item.service}
+                    onClick={() => this.changeDirectory(item)}
+                >
+                    <div className="info">
+                        <div className="name">{item.name}</div>
+                        <ModalContainer content={<FileOptions file={item} />}>
+                            <i className="fas fa-ellipsis-v dots" />
+                        </ModalContainer>
+                    </div>
+                </div>
+            );
+
+            if (item.shared) {
+                foldersShared.push(div);
+            } else {
+                foldersOwned.push(div);
+            }
         } else {
-          foldersOwned.push(div);
-        }
-      } else {
+
+        let div = (
+            <div
+              key={item.name + item.lastModified}
+              className={"file col " + item.service}
+            >
+                <div className={"preview " + item.service}>
+                    <i className={`fas fa-file-${getIcon(item)}`} />
+                </div>
+                <div className="info">
+                    <div className="name" title={item.name}>{item.name}</div>
+                    <ModalContainer content={<FileOptions file={item} />}>
+                        <i className="fas fa-ellipsis-v dots" />
+                    </ModalContainer>
+                </div>
+            </div>
+          );
+
+
         if (item.shared) {
           filesShared.push(div);
         } else {
@@ -128,18 +163,23 @@ class Main extends Component {
         </div>
 
         <div className="body col">
-          <div className="scroll-wrapper col">
-            <div className="header">My folders</div>
-            <div className="file-wrapper">{foldersOwned}</div>
+            <div className="directory">
+                <Directory directory={this.props.directory}/>
+            </div>
+          <div className="scroll-wrapper">
 
-            <div className="header">Folders shared with me</div>
-            <div className="file-wrapper">{foldersShared}</div>
+            { foldersOwned.length > 0 &&  <div className="header">My folders</div> }
+            { foldersOwned.length > 0 &&  <div className="file-wrapper">{foldersOwned}</div> }
 
-            <div className="header">My files</div>
-            <div className="file-wrapper">{filesOwned}</div>
+            { foldersShared.length > 0 &&  <div className="header">Folders shared with me</div> }
+            { foldersShared.length > 0 &&  <div className="file-wrapper">{foldersShared}</div> }
 
-            <div className="header">Files shared with me</div>
-            <div className="file-wrapper">{filesShared}</div>
+            
+            { filesOwned.length > 0 && <div className="header">My files</div> }
+            { filesOwned.length > 0 && <div className="file-wrapper">{filesOwned}</div> }
+
+            { filesShared.length > 0 &&  <div className="header">Files shared with me</div> }
+            { filesShared.length > 0 &&  <div className="file-wrapper">{filesShared}</div> }
           </div>
         </div>
       </div>
@@ -150,11 +190,13 @@ class Main extends Component {
 function mapStateToProps(state) {
   return {
     info: state.user.info,
-    files: state.files.files
+    files: state.files.files,
+    directoryFiles: state.files.directoryFiles,
+    directory: state.files.directory
   };
 }
 
-const actions = { addDropbox, logout };
+const actions = { addDropbox, logout,changeDirectoryGoogle };
 
 export default connect(
   mapStateToProps,

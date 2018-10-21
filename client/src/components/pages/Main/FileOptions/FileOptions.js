@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import styles from "./FileOptions.scss";
 import { connect } from "react-redux";
-import fileDownload from "js-file-download";
-import stream from "stream";
+
+import { simulateClick } from '../../../../actions/userActions'
+// import fileDownload from "js-file-download";
+// import stream from "stream";
 import axios from "axios";
 
 class FileOptions extends Component {
@@ -46,9 +48,19 @@ class FileOptions extends Component {
         })
         .then(res => {
           // console.log(res.data);
-          let bufferStream = new stream.PassThrough();
-          bufferStream.end(res.data);
-          fileDownload(bufferStream, this.props.file.name);
+        //   let bufferStream = new stream.PassThrough();
+        //   bufferStream.end(res.data);
+        //   fileDownload(bufferStream, this.props.file.name);
+        console.log(res)
+            var elem = document.createElement('a');
+            elem.setAttribute('id', 'authlink');
+            elem.classList.add('displayNone');
+            elem.setAttribute('target', '_blank');
+            document.querySelector(".body").appendChild(elem)
+            elem.href = res.data.link;
+            simulateClick(elem);
+            document.querySelector(".body").removeChild(elem)
+
         })
         .catch(err => console.log(err));
     } else {
