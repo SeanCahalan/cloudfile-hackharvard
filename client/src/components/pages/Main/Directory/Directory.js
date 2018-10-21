@@ -16,11 +16,11 @@ class Directory extends Component {
                 </div>
                 
             )
-            obj = directory[obj.parentID];
+            obj = directory[obj.parent];
         }
 
         return(
-            <div>
+            <div className="row">
                 {path}
             </div>
         )

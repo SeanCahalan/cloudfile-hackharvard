@@ -80,8 +80,14 @@
 
             flex: 1;
             height: 100%;
-            overflow: auto;
-
+            .directory{
+                padding: 2vw;
+                font-size: 2vw;
+            }
+            .container{
+                flex: 1;
+                overflow: auto;
+            }
             .scroll-wrapper {
                 padding: 2vw;
             }

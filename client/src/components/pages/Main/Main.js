@@ -106,7 +106,7 @@ class Main extends Component {
     return (
       <div className={styles.Main}>
         <div className="sidebar col">
-          <div className="logo">CLOUD FILE</div>
+          <div className="logo">FILETRON</div>
 
           <div className="name">
             {this.props.info.name || localStorage.getItem("name")}
@@ -166,6 +166,7 @@ class Main extends Component {
             <div className="directory">
                 <Directory directory={this.props.directory}/>
             </div>
+            <div className="container">
           <div className="scroll-wrapper">
 
             { foldersOwned.length > 0 &&  <div className="header">My folders</div> }
@@ -180,6 +181,7 @@ class Main extends Component {
 
             { filesShared.length > 0 &&  <div className="header">Files shared with me</div> }
             { filesShared.length > 0 &&  <div className="file-wrapper">{filesShared}</div> }
+          </div>
           </div>
         </div>
       </div>
