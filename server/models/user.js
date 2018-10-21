@@ -1,4 +1,5 @@
 "use strict";
+const facebook = require('../config/facebook');
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -9,8 +10,13 @@ const UserSchema = new Schema({
     id: { type: String, require: true },
     accessToken: { type: String, require: true },
     displayName: String,
+    birthday: String,
     email: String,
     expiresOn: Date
+  },
+  credentials: {
+    customerId: String,
+    connectId: String
   },
   dropbox: {
     id: String,
@@ -24,5 +30,6 @@ const UserSchema = new Schema({
     expiry_date: Number
   }
 }, { timestamps: true });
+
 
 module.exports = mongoose.model('User', UserSchema);

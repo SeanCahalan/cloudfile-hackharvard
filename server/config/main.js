@@ -19,6 +19,9 @@ module.exports = {
     app_secret: process.env.FACEBOOK_APP_SECRET,
     app_id: process.env.FACEBOOK_APP_ID
   },
+  stripe: {
+    api_key: process.env.STRIPE_API_KEY
+  },
   database: process.env.MONGODB_URI,
   node_env: process.env.NODE_ENV || "development",
   port: process.env.PORT || 3000
