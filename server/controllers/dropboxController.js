@@ -101,7 +101,7 @@ module.exports = {
       .catch(err => next(err));
   },
 
-  // this is some whack fuckery but i think it works
+// dont use, too weird from front end
   download: function(req, res, next) {
     if (!req.body.path)
       return next(new Error('No path provided'))
@@ -120,6 +120,15 @@ module.exports = {
         });
         res.end(data);
       })
+      .catch(err => next(err));
+  },
+
+  downloadUrl: function(req, res, next) {
+    if (!req.body.path)
+      return next(new Error('No path provided'))
+    const path = req.body.path;
+    return dropbox.filesGetTemporaryLink({ path: path })
+      .then(results => res.status(200).send({ link: results.link }))
       .catch(err => next(err));
   },
 
