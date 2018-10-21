@@ -13,6 +13,7 @@ let beautifyFile = function(file) {
     name: file.name,
     type: file.mimeType.split(".").pop(),
     size: file.size,
+    shared: !file.ownedByMe,
     lastModified: file.modifiedTime,
     service: "google"
   };
@@ -61,7 +62,7 @@ module.exports = {
       .list({
         q: query,
         fields:
-          "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size)"
+          "nextPageToken, files(id, name, parents, mimeType, modifiedTime, size, ownedByMe)"
       })
       .then(result => {
         let files = result.data.files;
