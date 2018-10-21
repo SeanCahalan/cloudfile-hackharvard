@@ -81,7 +81,7 @@ module.exports = {
   },
 
   delete: function(req, res, next) {
-    const fileId = req.body.file;
+    const fileId = req.body.id;
 
     return google.files
       .delete({ fileId })
@@ -107,7 +107,7 @@ module.exports = {
   },
 
   download: function(req, res, next) {
-    const fileId = req.body.fileId;
+    const fileId = req.body.id;
     return google.files
       .get({
         fileId: fileId,
@@ -148,7 +148,7 @@ module.exports = {
   },
 
   shareFile: function(req, res, next) {
-    var fileId = req.body.fileId;
+    var fileId = req.body.id;
     //var sharedEmail = req.body.sharedEmail;
     const fbidToShare = req.body.fbid;
 
@@ -164,7 +164,7 @@ module.exports = {
 
         return google.permissions.create({
           resource: permissions,
-          fileId: fileId,
+          fileId: id,
           fields: "id"
         });
       })
