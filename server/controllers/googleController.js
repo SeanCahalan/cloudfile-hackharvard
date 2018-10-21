@@ -100,20 +100,29 @@ module.exports = {
   },
 
   download: function(req, res, next) {
-    // var fileId = "0BwwA4oUTeiV1UVNwOHItT0xfa2M";
-    // var dest = fs.createWriteStream("/tmp/photo.jpg");
-    // drive.files
-    //   .get({
-    //     fileId: fileId,
-    //     alt: "media"
-    //   })
-    //   .on("end", function() {
-    //     console.log("Done");
-    //   })
-    //   .on("error", function(err) {
-    //     console.log("Error during download", err);
-    //   })
-    //   .pipe(dest);
+    const fileId = "1z7IJjNgaMfV-ld1lI6C9pRU5SY_RmBUL";
+    const dest = fs.createWriteStream(`${os.homedir()}/Downloads/testt.docx`);
+
+    return google.files
+      .export(
+        {
+          fileId,
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        },
+        { responseType: "stream" }
+      )
+      .then(result => {
+        result.data
+          .on("end", () => {
+            console.log("Done downloading document.");
+          })
+          .on("error", err => {
+            console.error("Error downloading document.");
+          })
+          .pipe(dest);
+      })
+      .catch(err => next(err));
   },
 
   upload: function(req, res, next) {
