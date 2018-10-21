@@ -1,7 +1,5 @@
 export const initialState = {
-    owned: [],
-    shared: [],
-    unsorted: []
+    files: []
 };
 
 export function fileReducers(state = initialState, action) {
@@ -15,24 +13,23 @@ export function fileReducers(state = initialState, action) {
         case 'FETCH_DROPBOX':
             return {
                 ...state,
-                owned: [
-                    ...state.owned, 
-                    ...action.payload.owned
-                ],
-                shared: [
-                    ...state.shared,
-                    ...action.payload.shared
+                files: [
+                    ...state.files, 
+                    ...action.payload
                 ]
             }
         case 'FETCH_GOOGLE':
             return {
                 ...state,
-                unsorted: action.payload
+                files: [
+                    ...state.files, 
+                    ...action.payload
+                ]
             }
         case "LOGOUT_SUCCESS":
             return {
                 ...state,
-                files: {}
+                files: []
             };
         default:
             return state;

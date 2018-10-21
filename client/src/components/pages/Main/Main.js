@@ -15,7 +15,7 @@ class Main extends Component{
 
         let owned = this.props.owned.map(file => {
             return(
-                <div key={file.name} className={"file col " + file.service}>
+                <div key={file.name+file.lastModified} className={"file col " + file.service}>
                     <div className={"preview " + file.service}>
                         <i className={`fas fa-file-${fileIcon[file.name.split('.')[1]]}`} />
                     </div>
@@ -28,7 +28,7 @@ class Main extends Component{
 
         let shared = this.props.shared.map(file => {
             return(
-                <div key={file.name} className={"file col " + file.service}>
+                <div key={file.name+file.lastModified} className={"file col " + file.service}>
                     <div className={"preview " + file.service}>
                         <i className={`fas fa-file-${fileIcon[file.name.split('.')[1]]}`} />
                     </div>
@@ -41,7 +41,7 @@ class Main extends Component{
 
         this.props.unsorted.forEach(item => {
             let div = (
-                <div key={item.name} className={"file col " + item.service}>
+                <div key={item.name+item.lastModified} className={"file col " + item.service}>
                     <div className={"preview " + item.service}>
                         <i className={`fas fa-file-${fileIcon[item.name.split('.')[1]]}`} />
                     </div>
@@ -110,15 +110,16 @@ class Main extends Component{
                 </div>
 
                 <div className="body col">
-                    <div className="header">My files</div>
-                    <div className="file-wrapper">
-                        {owned}
-                    </div>
-                    <div className="header">Shared with me</div>
-                    <div className="file-wrapper">
-                        {shared}
-                    </div>
-                    
+                        <div className="scroll-wrapper col">
+                            <div className="header">My files</div>
+                            <div className="file-wrapper">
+                                {owned}
+                            </div>
+                            <div className="header">Shared with me</div>
+                            <div className="file-wrapper">
+                                {shared}
+                            </div>
+                        </div>
                 </div>
 
             </div>

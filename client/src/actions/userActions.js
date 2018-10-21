@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Dropbox } from 'dropbox';
 
-const appUrl = process.env.NODE_ENV === 'development' ?
+const appUrl = process.env.NODE_ENV import { get } from 'http';
+=== 'development' ?
 'http://localhost:3000' : process.env.APP_URL;
 
 function setLoginData(fbid, name) {
@@ -13,13 +14,23 @@ function setLoginData(fbid, name) {
 function removeLoginData() {
     localStorage.removeItem("fbid");
     localStorage.removeItem("name");
-    localStorage.removeItem("fbAccessToken")
+    // localStorage.removeItem("fbAccessToken")
     delete axios.defaults.headers.common["Authorization"];
 }
 
 export function fbUpdateStatus(status) {
     return function(dispatch) {
         dispatch({ type: "FB_LOADED", payload: status });
+    };
+}
+
+export function getMe(){
+    return function(dispatch) {
+        axios.get('/services/me')
+        .then(res => {
+            dispatch({ type: "GOT_ME", payload: res.data });
+        })
+        
     };
 }
 
@@ -56,16 +67,16 @@ export function logout(){
 export function login(accessToken){
     return function(dispatch){
 
-        if(accessToken){
-            axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + accessToken}})
-                .then(res => {
-                    console.log(res.data);
-                    
-                    dispatch({type: "LOGIN_SUCCESS", payload: res.data })
-                }).catch(err => {
-                    console.log(err.data)
-                })
-        } else {
+        // if(accessToken){
+        //     axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + accessToken}})
+        //         .then(res => {
+        //             console.log(res.data);
+        //             //localStorage.setItem('fbAccessToken', res.data.facebook.accessToken)
+        //             dispatch({type: "LOGIN_SUCCESS", payload: res.data })
+        //         }).catch(err => {
+        //             console.log(err.data)
+        //         })
+        // } else {
             window.FB.login(
                 response => {
                     console.log(response)
@@ -81,7 +92,7 @@ export function login(accessToken){
                             setLoginData(fbid, name);
                             axios.post('/auth/login', null, {headers: {'Authorization': 'Bearer ' + access_token}})
                             .then(res => {
-                                localStorage.setItem('fbAccessToken', res.data.facebook.accessToken)
+                                //localStorage.setItem('fbAccessToken', res.data.facebook.accessToken)
                                 dispatch({type: "LOGIN_SUCCESS", payload: res.data})
                             }).catch(err => {
                                 console.log(err.data)
@@ -97,7 +108,7 @@ export function login(accessToken){
                 { scope: "email,user_birthday,user_friends" }
             );
         }  
-    }      
+    // }      
 }
 
 /**

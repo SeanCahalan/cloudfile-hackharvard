@@ -73,8 +73,13 @@
             }
         }
         .body{
-            padding: 2vw;
+            
             flex: 1;
+            height: 100%;
+            overflow: auto;
+            .scroll-wrapper{
+                padding: 2vw;
+            }
             .header{
                 margin-left: 2vw;
                 margin-bottom: 2vw;

@@ -73,6 +73,7 @@ class App extends Component {
 
     componentDidUpdate(prevProps){
         if(!prevProps.user.info && this.props.user.info){
+            console.log(this.props.user.info)
             this.props.dropboxFetch();
             if(this.props.user.info.google){
                 console.log('get the google')
