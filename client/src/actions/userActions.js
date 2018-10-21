@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dropbox } from 'dropbox';
 
 const appUrl = process.env.NODE_ENV === 'development' ?
-'http://localhost:3000' : 'https://cloudfile.localtunnel.me';
+'http://localhost:3000' : process.env.APP_URL;
 
 function setLoginData(fbid, name) {
     localStorage.setItem("fbid", fbid);
