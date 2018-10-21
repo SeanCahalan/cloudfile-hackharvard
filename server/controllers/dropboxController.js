@@ -45,28 +45,42 @@ module.exports = {
     ])
     .then(([owned, sharedFiles, sharedFolders]) => {
       let bibbity = [];
+
       for (let i=0; i < owned.entries.length; i++) {
         let entry = owned.entries[i];
         bibbity.push({
           'id': entry.id,
           'name': entry.name,
-          'size': entry.size,
+          'size': entry.size ? entry.size/1000000 : undefined,
           'last_modified': entry.server_modified,
           'service': 'dropbox',
-          'shared': false
+          'shared': false,
+          'isFolder': entry.size ? false : true
         });
       }
 
-      const shared = sharedFiles.entries.concat(sharedFolders.entries)
-      for (let i=0; i < shared.length; i++) {
-        let entry = shared[i];
+      for (let i=0; i < sharedFiles.entries.length; i++) {
+        let entry = sharedFiles.entries[i];
         bibbity.push({
           'id': entry.id,
           'name': entry.name,
-          'size': entry.size,
+          'size': entry.size ? entry.size/1000000 : undefined,
           'last_modified': entry.server_modified,
           'service': 'dropbox',
-          'shared': true
+          'shared': true,
+          'isFolder': false
+        });
+      }
+
+      for (let i=0; i < sharedFolders.entries.length; i++) {
+        let entry = sharedFolders.entries[i];
+        bibbity.push({
+          'id': entry.id,
+          'name': entry.name,
+          'last_modified': entry.server_modified,
+          'service': 'dropbox',
+          'shared': true,
+          'isFolder': true
         });
       }
       return res.status(200).send(bibbity);
