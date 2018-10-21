@@ -164,16 +164,16 @@ export function addGoogle(){
 
 export function getGoogleToken(code){
     return function(dispatch){
-        axios.post('/api/services/googleToken', {code: code})
+        axios.post('/api/services/googleToken', {code: code, url: appUrl})
         .then(res => {
             console.log(res)
-            let token = res.data;
+            let data = res.data;
             let body = {
-                access_token: '{google_access_token}',
-                refresh_token: '{google_refresh_token}',
-                scope: '{google_scope}',
-                token_type: '{google_token_type}',
-                expiry_date: '{google_expiry_date}',
+                access_token: data.access_token,
+                refresh_token: data.refresh_token,
+                scope: data.scope,
+                token_type: data.token_type,
+                expiry_date: data.expiry_data,
                 service: 'google'
             }
             axios.post('/api/services', body)

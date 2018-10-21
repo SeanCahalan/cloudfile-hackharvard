@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 
 import { fbUpdateStatus, login, addService, getGoogleToken } from './actions/userActions';
-import { dropboxDownload, dropboxFetch } from './actions/fileActions';
+import { dropboxDownload, dropboxFetch, googleFetch } from './actions/fileActions';
 
 import Login from './components/auth/Login/Login';
 import Main from './components/pages/Main/Main';
@@ -74,6 +74,7 @@ class App extends Component {
     componentDidUpdate(prevProps){
         if(!prevProps.user.info && this.props.user.info){
             this.props.dropboxFetch();
+            this.props.googleFetch('root');
         }
 
 
@@ -119,6 +120,7 @@ const actions = {
     login,
     addService,
     dropboxFetch,
+    googleFetch,
     getGoogleToken
 }
 
