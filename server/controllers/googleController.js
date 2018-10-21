@@ -1,4 +1,6 @@
 "use strict";
+const fs = require('fs');
+const stream = require('stream');
 let google;
 
 let compareFiles = function(file1, file2) {
@@ -53,8 +55,8 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
-    const directoryID = req.body.directoryID;
-    const query = "'" + directoryID + "'" + " in parents";
+    const parentId = req.body.parentId;
+    const query = "'" + parentId + "'" + " in parents";
     return google.files
       .list({
         q: query,
@@ -126,25 +128,34 @@ module.exports = {
   },
 
   upload: function(req, res, next) {
-    // var fileMetadata = {
-    //   'name': 'photo.jpg'
-    // };
-    // var media = {
-    //   mimeType: 'image/jpeg',
-    //   body: fs.createReadStream('files/photo.jpg')
-    // };
-    // drive.files.create({
-    //   resource: fileMetadata,
-    //   media: media,
-    //   fields: 'id'
-    // }, function (err, file) {
-    //   if (err) {
-    //     // Handle error
-    //     console.error(err);
-    //   } else {
-    //     console.log('File Id: ', file.id);
-    //   }
-    // });
+    if (!req.files.file[0])
+      return next(new Error('No file provided'));
+    if (!req.body.parentId)
+      return next(new Error('No parent ID provided'));
+
+    const file = req.files.file[0];
+    const fileMetadata = {
+      'name': file.originalname,
+      'parentId': "['" + req.files.parentId + "']"
+    }
+
+    let bufferStream = new stream.PassThrough();
+    bufferStream.end(file.buffer);
+
+    const media = {
+      //body: fileStream.put(file.buffer)
+      body: bufferStream
+    }
+
+    return google.files.create({
+      resource: fileMetadata,
+      media: media,
+      fields: 'id, size'
+    })
+      .then(result => {
+        res.status(201).send(result.data.size)
+      })
+      .catch(err => next(err));
   },
 
   shareFile: function(req, res, next) {
