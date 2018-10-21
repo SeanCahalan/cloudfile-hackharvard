@@ -160,17 +160,24 @@ module.exports = {
 
   shareFile: function(req, res, next) {
     var fileId = req.body.fileId;
-    var sharedEmail = req.body.sharedEmail;
-    var permissions = {
-      type: "user",
-      role: "writer",
-      emailAddress: sharedEmail
-    };
-    return drive.permissions
-      .create({
-        resource: permissions,
-        fileId: fileId,
-        fields: "id"
+    //var sharedEmail = req.body.sharedEmail;
+    const fbidToShare = req.body.fbid;
+
+    return User.findOne({ 'facebook.id': fbidToShare })
+      .then(user => {
+        let fbEmail = user.facebook.email;
+
+        let permissions = {
+          type: "user",
+          role: "writer",
+          emailAddress: fbEmail
+        };
+
+        return google.permissions.create({
+          resource: permissions,
+          fileId: fileId,
+          fields: "id"
+        });
       })
       .then(result => res.status(200).send(result))
       .catch(err => next(err));
