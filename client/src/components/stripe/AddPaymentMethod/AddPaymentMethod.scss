@@ -1,0 +1,26 @@
+.AddPaymentMethod{
+    :global{
+        #card-number{
+            width: 200px;
+            margin-right: 127px;
+        }
+        #card-expiry{
+            width: 104px;
+        }
+        #card-cvc{
+            //padding: 0;
+            justify-content: center;
+            width: 64px;     
+        }
+        input{
+            &[name="country"]{
+                width: 67px !important;
+               
+            }
+            &[name="currency"]{
+                width: 327px !important;
+            
+            }
+        }  
+    }
+}
