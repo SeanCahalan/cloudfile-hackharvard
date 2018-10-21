@@ -2,7 +2,53 @@
 const stripe = require('../config/stripe');
 const User = require('../models/user');
 const SaleRequest = require('../models/saleRequest');
+
+//2126037080774659
+
+function shareDropbox(fileId, fileSender, fileReceiver) {
+  const dropbox = require('../config/dropbox')(fileSender.dropbox.token)
+
+  let members;
+  if (fileReceiver.dropbox.id) {
+    members = [{
+      dropbox_id: fileReceiver.dropbox.id,
+      '.tag': 'dropbox_id'
+    }];
+  }
+  else {
+    members = [{
+      email: fileReceiver.facebook.email,
+      '.tag': 'email'
+    }]
+  }
+
+  return dropbox.sharingAddFileMember({
+    file: fileId,
+    members: members,
+    quiet: false,
+    access_level: { '.tag': 'viewer' },
+    add_message_as_comment: false
+  });
+}
+
+function shareGoogle(fileId, fileSender, fileReceiver) {
+  const google = require("../config/google")(fileSender.google);
+
+  var permissions = {
+    type: "user",
+    role: "reader",
+    emailAddress: fileReceiver.facebook.email
+  };
+
+  return google.permissions.create({
+    resource: permissions,
+    fileId: fileId,
+    fields: "id"
+  })
+}
+
 module.exports = {
+
   addCard: function(req, res, next) {
     if (!req.body.token) return next(new Error());
 
@@ -14,8 +60,7 @@ module.exports = {
     if (cards && cards.length >= 3)
       throw new Error("Can only have 3 payment methods");
 
-    return stripe.customers
-      .createSource(credentials.customerId, { source: token })
+    return stripe.customers.createSource(credentials.customerId, { source: token })
       .then(card => {
         return Promise.all([
           user.saveCard(card),
@@ -58,7 +103,10 @@ module.exports = {
     const fileName = req.body.fileName;
     const service = req.body.service;
     const amount = req.body.amount;
-    const uid = req.user.id;
+    const user = req.user;
+
+    if (!user.banks || user.banks.length === 0)
+      return next(new Error('You need a bank account to sell files'))
 
     return User.findOne({ 'facebook.id': fileReceiverFbid })
       .then(fileReceiver => {
@@ -67,7 +115,7 @@ module.exports = {
 
         const saleRequest = new SaleRequest({
           sender: fileReceiver.id,
-          receiver: uid,
+          receiver: user.id,
           amount: amount,
           file: file,
           fileName: fileName,
@@ -87,28 +135,49 @@ module.exports = {
   },
 
   // user accepting sale request will call this
-  // will need to do sharing here as well
-  acceptSaleRequest: function(req,res, next) {
-    const amount = req.body.amount;
+  acceptSaleRequest: function(req, res, next) {
     const requestId = req.params.requestId;
     const senderCreds = req.user.credentials;
+    const user = req.user;
+    if (!user.cards || user.cards.length === 0)
+      return next(new Error('You need a payment method to purchase files'));
 
-    return SaleRequest.findById(requestId)
-      .populate('receiver', 'credentials').exec()
-      .then(saleRequest => {
+    let saleRequest;
+    return SaleRequest.findOne(requestId)
+      .populate('receiver').exec()
+      .then(result => {
+        saleRequest = result;
+        if (saleRequest.sender !== user.id)
+          throw new Error('You can only accept sale requests you have received');
+
+        console.log('sale request')
+        console.log(saleRequest)
+
         const receiverCreds = saleRequest.receiver.credentials;
 
         return stripe.charges.create({
-          amount: Math.round(amount * 100),
+          amount: Math.round(saleRequest.amount * 100),
           currency: "CAD",
           customer: senderCreds.customerId,
           destination: { account: receiverCreds.connectId }
         })
-
-        // TODO: share file
-
-        // TODO: delete sale request
       })
+      .then(result => {
+        console.log('stripe result')
+        console.log(result)
+
+        return (saleRequest.service === 'dropbox' ?
+          shareDropbox(saleRequest.file, saleRequest.receiver, user) :
+          shareGoogle(saleRequest.file, saleRequest.receiver, user))
+      })
+      .then(result => {
+        console.log('sharing result')
+        console.log(result);
+        return saleRequest.remove();
+      })
+      .then(() => res.status(201).send({ success: true }))
+      .catch(err => next(err));
+
   },
 
   declineSaleRequest: function(req, res, next) {
