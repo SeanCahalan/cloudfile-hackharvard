@@ -196,11 +196,30 @@ function removeHash () {
     if ("pushState" in window.history)
         window.history.pushState("", document.title, loc.pathname + loc.search);
     else {
+        console.log('RESET LINK')
         // Prevent scrolling by storing the page's current scroll offset
         scrollV = document.body.scrollTop;
         scrollH = document.body.scrollLeft;
 
+        loc.search = ""
         loc.hash = "";
+
+        // Restore the scroll offset, should be flicker free
+        document.body.scrollTop = scrollV;
+        document.body.scrollLeft = scrollH;
+    }
+}
+
+function removeSearch () { 
+    var scrollV, scrollH, loc = window.location;
+    if ("pushState" in window.history)
+        window.history.pushState("", document.title, loc.pathname + loc.search);
+    else {
+        // Prevent scrolling by storing the page's current scroll offset
+        scrollV = document.body.scrollTop;
+        scrollH = document.body.scrollLeft;
+
+        loc.search = "";
 
         // Restore the scroll offset, should be flicker free
         document.body.scrollTop = scrollV;

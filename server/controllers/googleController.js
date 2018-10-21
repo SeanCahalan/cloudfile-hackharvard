@@ -53,6 +53,7 @@ module.exports = {
   },
 
   fetch: function(req, res, next) {
+    console.log("FUCK GOOGLE");
     const directoryID = req.body.directoryID;
     const query = "'" + directoryID + "'" + " in parents";
     return google.files
