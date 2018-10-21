@@ -11,7 +11,7 @@ import Main from './components/pages/Main/Main';
 
 class App extends Component {
     componentDidMount() {
-
+        console.log(process.env)
         const fbid = localStorage.getItem('fbid')
         if(fbid)
             axios.defaults.headers.common["Authorization"] = "Bearer " + fbid;
@@ -39,7 +39,7 @@ class App extends Component {
 
         window.fbAsyncInit = () => {
             window.FB.init({
-                appId: '325135954735646',
+                appId: process.env.FACEBOOK_APP_ID,
                 autoLogAppEvents: true,
                 xfbml: true,
                 version: "v3.1"
@@ -64,6 +64,7 @@ class App extends Component {
         if(!prevProps.user.info && this.props.user.info){
             this.props.dropboxFetch();
         }
+
 
         // this is the more proper way with fb login
 
@@ -96,7 +97,8 @@ class App extends Component {
 
 function mapStateToProps(state){
     return {
-        user: state.user
+        user: state.user,
+
     }
 }
 

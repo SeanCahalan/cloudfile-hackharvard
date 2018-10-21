@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Dropbox } from 'dropbox';
 
 const appUrl = process.env.NODE_ENV === 'development' ?
-'http://localhost:3000' : 'https://cloudfile.localtunnel.me';
+'http://localhost:3000' : process.env.APP_URL;
 
 function setLoginData(fbid, name) {
     localStorage.setItem("fbid", fbid);
@@ -71,7 +71,7 @@ export function login(accessToken){
                     console.log(response)
                     if (response.authResponse) {
                         let access_token = response.authResponse.accessToken;
-                        
+                        console.log(access_token);
                         // set axios headers to use Bearer auth
                         window.FB.api('/me', function(response) {
                             console.log(response);
@@ -94,7 +94,7 @@ export function login(accessToken){
                         );
                     }
                 },
-                { scope: "email" }
+                { scope: "email,user_birthday,user_friends" }
             );
         }  
     }      
