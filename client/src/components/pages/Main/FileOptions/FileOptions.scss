@@ -1,0 +1,43 @@
+.FileOptions {
+  display: flex;
+  width: 40vw;
+  height: 20vw;
+
+
+  :global {
+    .service {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      flex-direction: row;
+      height: 20vw;
+      box-shadow: inset 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
+
+      .title {
+        margin-bottom: 2vw;
+      }
+
+      .info {
+        width: 50%
+      }
+
+      .options {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+
+        span {
+          margin-bottom: 5%;
+        }
+      }
+
+      &.disabled {
+        filter: grayscale(.5);
+      }
+    }
+  }
+}

@@ -1,16 +1,17 @@
-.Main{
+.Main {
     height: 100%;
     display: flex;
     font-size: 1.3vw;
-    :global{
-        .sidebar{
+
+    :global {
+        .sidebar {
             padding: 1vw;
             padding-left: 0;
             width: 20vw;
             min-width: 180px;
             box-shadow: 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
-            
-            .list-item{
+
+            .list-item {
                 height: 3vw;
                 display: flex;
                 align-items: center;
@@ -18,7 +19,8 @@
                 padding: 1vw 0;
                 margin-left: 1vw;
                 cursor: pointer;
-                &:hover{
+
+                &:hover {
                     margin-left: 0;
                     padding-left: 1vw;
                     background: #ddd;
@@ -26,17 +28,20 @@
                     border-bottom-right-radius: 1.5vw;
                 }
             }
-            .name{
+
+            .name {
                 margin-left: 1vw;
             }
-            .logo{
+
+            .logo {
                 margin-left: 1vw;
                 cursor: pointer;
                 font-size: 2.4vw;
                 font-weight: bold;
                 margin-bottom: 2vw;
             }
-            .action{
+
+            .action {
                 margin: 2vw 0;
                 margin-left: 1vw;
                 margin-right: 4vw;
@@ -48,10 +53,12 @@
                 height: 4vw;
                 border-radius: 2vw;
                 box-shadow: 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
-                i{
+
+                i {
                     margin-left: auto;
                 }
-                &:hover{
+
+                &:hover {
                     margin-left: 0;
                     padding-left: 3vw;
                     background: #ddd;
@@ -59,60 +66,75 @@
                     border-bottom-left-radius: 0;
                 }
             }
-            .add-payout{
 
-            }
-            .add-payment{
+            .add-payout {}
 
-            }
-            .add-service{
-                
-            }
-            .logout{
-                
-            }
+            .add-payment {}
+
+            .add-service {}
+
+            .logout {}
         }
-        .body{
-            
+
+        .body {
+
             flex: 1;
             height: 100%;
             overflow: auto;
-            .scroll-wrapper{
+
+            .scroll-wrapper {
                 padding: 2vw;
             }
-            .header{
+
+            .header {
                 margin-left: 2vw;
                 margin-bottom: 2vw;
             }
-            .file-wrapper{
+
+            .file-wrapper {
                 display: flex;
                 flex-wrap: wrap;
-                margin-bottom: 1vw;
-                .file{
+                min-height: 20vh;
 
-                    .preview{
+                .file {
+
+                    .preview {
                         height: 70%;
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        &.dropbox{
+
+                        &.dropbox {
                             background: #0070e0;
                         }
-                        &.google{
+
+                        &.google {
                             background: #0F9D58;
                         }
-                        i{
+
+                        i {
                             color: white;
                             font-size: 5vw;
                         }
                     }
-                    .info{
+
+                    .info {
+                        position: relative;
                         padding: 1vw;
                         flex: 1;
                         display: flex;
                         flex-direction: column;
                         justify-content: center;
+
+                        .dots {
+                            position: absolute;
+                            width: 20px;
+                            top: 40%;
+                            right: 0;
+                            cursor: pointer;
+                        }
                     }
+
                     width: 20%;
                     margin-left: 2vw;
                     margin-bottom: 2vw;
@@ -120,7 +142,7 @@
                     box-shadow: 0 1px 24px 0.5px rgba(176, 192, 237, 0.42);
                 }
             }
-            
+
 
         }
     }
