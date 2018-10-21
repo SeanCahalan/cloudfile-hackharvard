@@ -20,9 +20,9 @@ export function dropboxFetch(){
     }
 }
 
-export function googleFetch(id, token){
+export function googleFetch(id){
     return function(dispatch){
-        axios.post('/api/google/fetch', {parentId: id},{headers: {Authorization: "Bearer " + token}})
+        axios.post('/api/google/fetch', {parentId: id})
         .then(res => {
             console.log(res);
             dispatch({type: 'FETCH_GOOGLE', payload: res.data})

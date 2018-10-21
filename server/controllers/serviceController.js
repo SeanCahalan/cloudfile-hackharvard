@@ -34,7 +34,7 @@ module.exports = {
     var body = req.body;
     const service = body.service;
     delete body.service;
-
+    console.log('adding:', service)
     var user = req.user;
     user[service] = body;
 
@@ -79,6 +79,7 @@ module.exports = {
     },
     googleToken: function(req, res, next) {
         let code = req.body.code;
+        const appUrl = req.body.url;
         console.log('code:', code)
         const oAuth2Client = new google.auth.OAuth2(
             "219082002868-jn4q1i7cfqlf77qe8ldf46tkfg23hooh.apps.googleusercontent.com",
