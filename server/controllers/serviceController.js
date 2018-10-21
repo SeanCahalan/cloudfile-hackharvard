@@ -52,7 +52,6 @@ module.exports = {
 
   googleAuth: function(req, res, next) {
     console.log('what the fuck')
-    console.log(req);
     const appUrl = req.body.url;
     console.log('appurl:',appUrl)
       const SCOPES = [
@@ -75,10 +74,23 @@ module.exports = {
       scope: SCOPES
     });
     console.log("google url", authUrl)
-    //code=code from url
-    oAuth2Client.getToken(authUrl, (err, token) => { 
-      // return token
-    });
+    
     res.send(authUrl);
-},
+    },
+    googleToken: function(req, res, next) {
+        let code = req.body.code;
+        console.log('code:', code)
+        const oAuth2Client = new google.auth.OAuth2(
+            "219082002868-jn4q1i7cfqlf77qe8ldf46tkfg23hooh.apps.googleusercontent.com",
+            "EmTMVLtGPd-LDh1mhIXoE8dw",
+            appUrl
+          );
+
+          //code=code from url
+        oAuth2Client.getToken(code, (err, token) => { 
+            if(err)
+                console.log(err)
+            res.send(token);
+        });
+    }
 };

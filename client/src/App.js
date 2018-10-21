@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 
-import { fbUpdateStatus, login, addService } from './actions/userActions';
+import { fbUpdateStatus, login, addService, getGoogleToken } from './actions/userActions';
 import { dropboxDownload, dropboxFetch } from './actions/fileActions';
 
 import Login from './components/auth/Login/Login';
@@ -24,6 +24,7 @@ class App extends Component {
 
         //parse redirect uri.
         const location = this.props.location;
+        console.log(location)
         if(location.hash && fbid){
             let hashMap = {}
             location.hash.replace('#','').split('&').forEach(item => {
@@ -35,6 +36,16 @@ class App extends Component {
             console.log("ADD SERVICE:", service, access_token)
 
             this.props.addService({token: access_token}, service);
+        } else if(location.search){
+            console.log('query:', location.search);
+            let hashMap = {}
+            location.search.replace('?','').split('&').forEach(item => {
+                let key_value = item.split('=');
+                hashMap[key_value[0]] = key_value[1];
+            });
+            let code = hashMap.code;
+            this.props.getGoogleToken(code);
+
         }
 
         window.fbAsyncInit = () => {
@@ -107,7 +118,8 @@ const actions = {
     dropboxDownload,
     login,
     addService,
-    dropboxFetch
+    dropboxFetch,
+    getGoogleToken
 }
 
 export default withRouter(connect(mapStateToProps, actions)(App));

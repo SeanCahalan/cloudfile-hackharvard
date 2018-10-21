@@ -136,7 +136,7 @@ export function addDropbox(){
 
   
 
-export function getGoogleToken(){
+export function addGoogle(){
     return function(dispatch){
         axios.post('/api/services/googleAuth', {url: appUrl})
         .then(res => {
@@ -144,14 +144,14 @@ export function getGoogleToken(){
             let authUrl = res.data;
             localStorage.setItem('serviceToAdd', 'google')
 
-        var elem = document.createElement('a');
-        elem.setAttribute('id', 'authlink');
-        elem.classList.add('displayNone');
-        document.querySelector(".body").appendChild(elem)
-        elem.href = authUrl;
-        simulateClick(elem);
+            var elem = document.createElement('a');
+            elem.setAttribute('id', 'authlink');
+            elem.classList.add('displayNone');
+            document.querySelector(".body").appendChild(elem)
+            elem.href = authUrl;
+            simulateClick(elem);
 
-        dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'google'}});
+            dispatch({type: "GET_ACCESS_TOKEN", payload: {service: 'google'}});
 
 
         }).catch(err => {
@@ -159,6 +159,35 @@ export function getGoogleToken(){
         })
 
         
+    }
+}
+
+export function getGoogleToken(code){
+    return function(dispatch){
+        axios.post('/api/services/googleToken', {code: code})
+        .then(res => {
+            console.log(res)
+            let token = res.data;
+            let body = {
+                access_token: '{google_access_token}',
+                refresh_token: '{google_refresh_token}',
+                scope: '{google_scope}',
+                token_type: '{google_token_type}',
+                expiry_date: '{google_expiry_date}',
+                service: 'google'
+            }
+            axios.post('/api/services', body)
+            .then(res => {
+                removeHash();
+                console.log(res);
+                localStorage.removeItem('serviceToAdd');
+                dispatch({type: "ADD_SERVICE", payload: 'google'});
+            }).catch(err => {
+                console.log(err)
+            })
+        }).catch(err => {
+            console.log(err)
+        })
     }
 }
 

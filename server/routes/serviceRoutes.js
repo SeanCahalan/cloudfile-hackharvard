@@ -6,4 +6,5 @@ const serviceRouter = express.Router();
 serviceRouter.use(serviceController.middleware);
 serviceRouter.post('/', serviceController.addService);
 serviceRouter.post('/googleAuth', serviceController.googleAuth);
+serviceRouter.post('/googleToken', serviceController.googleToken);
 module.exports = serviceRouter;
